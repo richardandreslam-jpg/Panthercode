@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #17211b;
+  --muted: #607066;
+  --paper: #f4f1e9;
+  --lime: #c8ef7a;
+  --green: #1d5d47;
+  --line: rgba(23, 33, 27, 0.14);
+}
+
+* { box-sizing: border-box; }
+
+html, body { min-height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+::selection { background: var(--lime); color: var(--ink); }
+
+@keyframes drift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero-surface {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(200, 239, 122, 0.72), transparent 27%),
+    radial-gradient(circle at 86% 82%, rgba(92, 174, 142, 0.3), transparent 31%),
+    linear-gradient(120deg, #f4f1e9 0%, #e5edda 48%, #f4f1e9 100%);
+  background-size: 140% 140%;
+  animation: drift 18s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-surface { animation: none; }
+}
