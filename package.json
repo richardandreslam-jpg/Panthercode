@@ -2,6 +2,10 @@
   "name": "panthercode",
   "version": "0.1.0",
   "private": true,
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "unrs-resolver@1.12.2": true
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
