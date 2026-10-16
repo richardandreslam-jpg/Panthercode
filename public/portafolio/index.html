@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panthercode · Richard Díaz · Diseño Digital</title>
+  <meta name="description" content="Portafolio de Richard Andrés Díaz Lamadrid, estudiante de Diseño Digital en la Universidad Sergio Arboleda, sede Santa Marta.">
+  <meta name="theme-color" content="#050607">
+  <link rel="icon" href="assets/panther.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ============ SPRITE SVG ============
+       Degradados y filtros compartidos. Los trazos de la pantera se cargan
+       desde assets/panther.svg (main.js los inserta en #panther-defs). -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs id="panther-defs">
+      <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffffff"/>
+        <stop offset=".2" stop-color="#9aa19a"/>
+        <stop offset=".38" stop-color="#f4f6f2"/>
+        <stop offset=".6" stop-color="#5a615b"/>
+        <stop offset=".8" stop-color="#e6eae3"/>
+        <stop offset="1" stop-color="#8b928b"/>
+      </linearGradient>
+      <filter id="glow" x="-50%" y="-80%" width="200%" height="260%">
+        <feGaussianBlur stdDeviation="8" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Interacción 1: fondo de puntos reactivo (solo en la vista Inicio) -->
+  <canvas class="bg-dots" id="bg-dots" aria-hidden="true"></canvas>
+
+  <a class="skip-link" href="#app" data-skip>Saltar al contenido</a>
+
+  <!-- ============ BARRA DE ANUNCIO ============ -->
+  <div class="announce" role="region" aria-label="Anuncio">
+    <div class="marquee" aria-hidden="true"><div class="marquee__track" id="announce-track"></div></div>
+    <p class="sr-only">Disponible para prácticas y colaboraciones. Diseño digital. Santa Marta, Colombia. Universidad Sergio Arboleda. richardandreslam@gmail.com</p>
+  </div>
+  <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="header" id="header">
+    <a class="brand" href="#inicio" aria-label="Panthercode, ir al inicio">PANTHER<b>CODE</b></a>
+    <span class="header__sep" aria-hidden="true"></span>
+    <span class="tag header__tag">Portafolio digital</span>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú">
+      <span></span><span></span>
+    </button>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#inicio" data-nav="inicio">Inicio</a>
+      <a href="#proyectos" data-nav="proyectos">Proyectos</a>
+      <a href="#sobre-mi" data-nav="sobre-mi">Sobre mí</a>
+      <a href="#contacto" data-nav="contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <main id="app" tabindex="-1">
+
+    <!-- ================= VISTA: INICIO ================= -->
+    <section class="view" data-view="inicio" aria-label="Inicio">
+
+      <!-- A) HERO -->
+      <div class="hero">
+        <div class="hero__copy">
+          <p class="tag reveal">[ Bienvenidos a ]</p>
+          <h1 class="wordmark"><span class="wordmark__a">PANTHER</span><span class="wordmark__b">CODE</span></h1>
+          <p class="hero__lema reveal">Diseño digital que deja huella.</p>
+          <div class="hero__id reveal">
+            <strong>Richard Andrés Díaz Lamadrid</strong>
+            <span>Estudiante de Diseño Digital, Universidad Sergio Arboleda, sede Santa Marta</span>
+          </div>
+          <p class="hero__intro reveal">Este es mi espacio creativo: aquí reúno mis proyectos y mi proceso para convertir ideas en experiencias digitales.</p>
+          <div class="hero__actions reveal">
+            <a class="btn btn--main" href="#proyectos"><span>Explorar proyectos</span><i aria-hidden="true">→</i></a>
+            <a class="link" href="#sobre-mi">Conocer mi trayectoria</a>
+          </div>
+        </div>
+
+        <div class="hero__emblem" id="emblem-wrap">
+          <div class="emblem-glow" aria-hidden="true"></div>
+          <svg class="emblem" id="emblem" viewBox="0 0 390 375" role="img" aria-label="Emblema de pantera de Panthercode">
+            <use href="#panther-silhouette" fill="url(#chrome)" fill-rule="evenodd"/>
+            <use class="emblem__eye" href="#panther-eye" fill="#b8ff1a" filter="url(#glow)"/>
+          </svg>
+        </div>
+
+        <p class="coords tag" aria-label="Coordenadas de Santa Marta">11.2405° N<br>74.2277° W</p>
+
+        <div class="hero__bottom">
+          <!-- El logo se carga desde main.js (UNI_LOGO); mientras tanto se muestra el texto -->
+          <div class="uni is-fallback">
+            <img class="uni__logo" alt="Universidad Sergio Arboleda" width="160" height="48">
+            <p class="uni__fallback">UNIVERSIDAD SERGIO ARBOLEDA<span>Santa Marta</span></p>
+          </div>
+          <div class="mouse" aria-hidden="true"><span></span></div>
+          <p class="tag hero__words">Ideas / Diseño / Experiencias <span aria-hidden="true">——</span></p>
+        </div>
+      </div>
+
+      <!-- B) CONTADORES -->
+      <div class="counters reveal" id="home-counters"></div>
+
+      <!-- C) CINTA DE HERRAMIENTAS -->
+      <div class="ribbon" aria-label="Herramientas y disciplinas">
+        <div class="marquee"><div class="marquee__track marquee__track--slow" id="ribbon-track"></div></div>
+      </div>
+
+      <!-- D) PRINCIPIOS -->
+      <section class="section" aria-labelledby="t-principios">
+        <p class="tag reveal">[ Sección 01 ]</p>
+        <h2 class="title reveal" id="t-principios">Cuatro <em>principios.</em></h2>
+        <div class="principles" id="principles"></div>
+      </section>
+
+      <!-- E) DISCIPLINAS -->
+      <section class="section" aria-labelledby="t-disciplinas">
+        <p class="tag reveal">[ Sección 02 ]</p>
+        <h2 class="title reveal" id="t-disciplinas">Tres disciplinas, <em>una identidad.</em></h2>
+        <div class="accordion reveal" id="accordion"></div>
+      </section>
+
+      <!-- F) PROYECTOS RECIENTES -->
+      <section class="section" aria-labelledby="t-recientes">
+        <div class="section__head">
+          <div>
+            <p class="tag reveal">[ Sección 03 ]</p>
+            <h2 class="title reveal" id="t-recientes">Proyectos <em>recientes.</em></h2>
+          </div>
+          <div class="carousel__ctrl reveal">
+            <button class="icon-btn" id="car-prev" aria-label="Proyecto anterior">←</button>
+            <button class="icon-btn" id="car-next" aria-label="Proyecto siguiente">→</button>
+            <a class="btn btn--small" href="#proyectos"><span>Ver todos</span></a>
+          </div>
+        </div>
+        <div class="carousel reveal" id="carousel" tabindex="0" aria-label="Carrusel de proyectos recientes"></div>
+      </section>
+
+      <!-- G) FILOSOFÍA -->
+      <section class="section quote" aria-label="Filosofía">
+        <p class="tag reveal">[ Filosofía ]</p>
+        <blockquote class="reveal">Un buen diseño no se nota: <em>se siente.</em></blockquote>
+        <p class="quote__sub reveal">Cada decisión visual existe para que la experiencia fluya sin esfuerzo.</p>
+      </section>
+
+      <!-- H) CTA FINAL -->
+      <section class="section">
+        <div class="cta reveal">
+          <h2 class="title">¿Tienes una idea? <em>Hablemos.</em></h2>
+          <div class="cta__actions">
+            <!-- WhatsApp: el número y el mensaje se editan en WHATSAPP (main.js) -->
+            <a class="btn btn--main" href="https://wa.me/573016407222" data-whatsapp target="_blank" rel="noopener"><span>Escribirme por WhatsApp</span><i aria-hidden="true">→</i></a>
+            <button class="link" type="button" data-copy>Copiar correo</button>
+          </div>
+          <p class="tag cta__phone">WhatsApp · <span data-whatsapp-label>+57 301 640 7222</span></p>
+        </div>
+      </section>
+    </section>
+
+    <!-- ================= VISTA: PROYECTOS ================= -->
+    <section class="view page" data-view="proyectos" aria-labelledby="t-proyectos" hidden>
+      <p class="tag reveal">[ Selección ]</p>
+      <h1 class="title title--page reveal" id="t-proyectos">Proyectos <em>destacados.</em></h1>
+      <div class="projects-bar reveal">
+        <div class="filters" id="filters" role="group" aria-label="Filtrar por categoría"></div>
+        <!-- Interacción 4: alternar entre cuadrícula y tablero -->
+        <div class="view-toggle" role="group" aria-label="Modo de visualización">
+          <button class="view-toggle__btn" type="button" data-mode="grid" aria-pressed="true">Cuadrícula</button>
+          <button class="view-toggle__btn" type="button" data-mode="board" aria-pressed="false">Tablero</button>
+        </div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="board" id="board" hidden>
+        <div class="board__canvas" id="board-canvas"></div>
+        <span class="board__hint tag" aria-hidden="true">✦ Arrastra</span>
+      </div>
+    </section>
+
+    <!-- ================= VISTA: SOBRE MÍ ================= -->
+    <section class="view page" data-view="sobre-mi" aria-labelledby="t-sobre" hidden>
+      <!-- Interacción 3: héroe dividido DISEÑO | CÓDIGO -->
+      <div class="split reveal" id="split" role="group" aria-label="Diseño y código">
+        <!-- Al presionar DISEÑO: estallido de formas y baja hasta el texto de Sobre mí -->
+        <button class="split__half" type="button" data-split="0" aria-pressed="false" aria-label="Diseño: ir a Sobre mí">
+          <span class="tag">[ 01 ]</span>
+          <span class="split__word" aria-hidden="true">DISEÑO</span>
+          <span class="split__list">Branding · UI/UX · Motion</span>
+          <span class="split__detail">Ideas que se ven, se entienden y se sienten.</span>
+          <span class="split__fx" aria-hidden="true"></span>
+        </button>
+        <!-- Al presionar CÓDIGO: el código llena el botón y luego aparece la información (CODE_INFO en main.js) -->
+        <button class="split__half split__half--code" type="button" data-split="1" aria-pressed="false" aria-controls="split-info">
+          <span class="tag">[ 02 ]</span>
+          <span class="split__word">CÓDIGO</span>
+          <span class="split__list">HTML · CSS · JavaScript</span>
+          <span class="split__detail">Ideas que funcionan de verdad en el navegador.</span>
+          <span class="split__info" id="split-info"></span>
+          <span class="split__code" aria-hidden="true"></span>
+        </button>
+      </div>
+      <p class="tag reveal about-anchor" id="sobre-texto">[ Sobre mí ]</p>
+      <h1 class="title title--page reveal" id="t-sobre">Diseño con <em>intención.</em></h1>
+      <div class="about">
+        <div>
+          <p class="about__text reveal">Soy Richard Andrés Díaz Lamadrid, estudiante de Diseño Digital en la Universidad Sergio Arboleda, sede Santa Marta. Me apasiona construir identidades visuales, interfaces claras y piezas en movimiento que comuniquen con precisión.</p>
+          <p class="about__text reveal">Me interesa especialmente el diseño UX/UI y la accesibilidad digital: crear experiencias que cualquier persona pueda usar sin esfuerzo. Mi forma de trabajar empieza por entender a quién voy a diseñar, luego exploro ideas, prototipo y ajusto cada detalle hasta que la solución se sienta natural. Hoy sigo aprendiendo investigación de usuarios, prototipado avanzado y motion design para que mis proyectos no solo se vean bien, sino que resuelvan problemas reales.</p>
+          <div class="stats reveal" id="about-stats"></div>
+          <h2 class="subtitle reveal">Habilidades</h2>
+          <ul class="skills" id="skills"></ul>
+        </div>
+        <ol class="timeline" id="timeline" aria-label="Trayectoria"></ol>
+      </div>
+      <!-- Frase de cierre: el texto se edita en ABOUT_QUOTE (main.js) -->
+      <figure class="about-quote reveal" id="about-quote"></figure>
+    </section>
+
+    <!-- ================= VISTA: CONTACTO ================= -->
+    <section class="view page" data-view="contacto" aria-labelledby="t-contacto" hidden>
+      <p class="tag reveal">[ Hablemos ]</p>
+      <h1 class="title title--page reveal" id="t-contacto">Creemos algo <em>juntos.</em></h1>
+      <div class="contact">
+        <button class="contact__row reveal" type="button" data-copy>
+          <span class="tag">01</span><span class="contact__label">Copiar correo</span><span class="contact__value">richardandreslam@gmail.com</span><i aria-hidden="true">→</i>
+        </button>
+        <a class="contact__row reveal" href="https://wa.me/573016407222" data-whatsapp target="_blank" rel="noopener">
+          <span class="tag">02</span><span class="contact__label">WhatsApp</span><span class="contact__value" data-whatsapp-label>+57 301 640 7222</span><i aria-hidden="true">→</i>
+        </a>
+        <a class="contact__row reveal" href="mailto:richardandreslam@gmail.com">
+          <span class="tag">03</span><span class="contact__label">Enviar mensaje</span><span class="contact__value">Abrir tu correo</span><i aria-hidden="true">→</i>
+        </a>
+        <!-- Redes sociales: copia una fila como esta y cambia el enlace.
+        <a class="contact__row reveal" href="https://www.linkedin.com/in/TU-USUARIO" target="_blank" rel="noopener">
+          <span class="tag">04</span><span class="contact__label">LinkedIn</span><span class="contact__value">/in/tu-usuario</span><i aria-hidden="true">→</i>
+        </a>
+        <a class="contact__row reveal" href="https://www.behance.net/TU-USUARIO" target="_blank" rel="noopener">
+          <span class="tag">05</span><span class="contact__label">Behance</span><span class="contact__value">behance.net/tu-usuario</span><i aria-hidden="true">→</i>
+        </a>
+        <a class="contact__row reveal" href="https://www.instagram.com/TU-USUARIO" target="_blank" rel="noopener">
+          <span class="tag">06</span><span class="contact__label">Instagram</span><span class="contact__value">@tu-usuario</span><i aria-hidden="true">→</i>
+        </a>
+        -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer__cols">
+      <div>
+        <a class="brand" href="#inicio">PANTHER<b>CODE</b></a>
+        <p class="footer__desc">Portafolio de diseño digital de Richard Díaz. Branding, interfaces y motion con identidad propia.</p>
+      </div>
+      <nav aria-label="Pie de página">
+        <p class="tag">Navegación</p>
+        <a href="#inicio">Inicio</a>
+        <a href="#proyectos">Proyectos</a>
+        <a href="#sobre-mi">Sobre mí</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <div>
+        <p class="tag">Contacto</p>
+        <a href="mailto:richardandreslam@gmail.com">richardandreslam@gmail.com</a>
+        <button class="link" type="button" data-copy>Copiar correo</button>
+        <p class="footer__muted">Santa Marta, Colombia</p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Panthercode · Richard Díaz</span>
+      <span>Universidad Sergio Arboleda</span>
+    </div>
+  </footer>
+
+  <!-- ============ TOAST Y MODAL ============ -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog class="modal" id="modal" aria-labelledby="modal-title">
+    <div class="modal__box">
+      <button class="modal__close" id="modal-close" aria-label="Cerrar">✕</button>
+      <div class="modal__thumb" id="modal-thumb" aria-hidden="true"></div>
+      <p class="tag" id="modal-cat"></p>
+      <h2 class="modal__title" id="modal-title"></h2>
+      <ul class="tags" id="modal-tags"></ul>
+      <p class="modal__desc" id="modal-desc"></p>
+      <div class="modal__goal" id="modal-goal" hidden>
+        <p class="tag">[ Objetivo ]</p>
+        <p id="modal-goal-text"></p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Interacción 2: cortina de 6 columnas para cambiar de vista -->
+  <div class="curtain" id="curtain" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- ============ CURSOR PERSONALIZADO (solo con mouse) ============ -->
+  <div class="cursor" aria-hidden="true">
+    <svg class="cursor__panther" id="cur-panther" viewBox="0 0 390 375">
+      <use href="#panther-silhouette" fill="#b8ff1a" fill-rule="evenodd"/>
+      <use href="#panther-eye" fill="#050607"/>
+    </svg>
+    <svg class="cursor__arrow" id="cur-arrow" viewBox="0 0 18 22">
+      <path d="M1 1 L1 17 L5.5 13 L9 21 L12 19.5 L8.5 12 L15 12Z" fill="#050607" stroke="#b8ff1a" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
