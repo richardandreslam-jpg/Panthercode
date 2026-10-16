@@ -7,3 +7,6 @@ coverage
 .DS_Store
 data/_backups/*
 !data/_backups/.gitkeep
+.vercel
+.env*
+!.env.example
