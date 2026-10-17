@@ -23,6 +23,8 @@ const ENABLE = {
   split: true,     // 3. Héroe dividido DISEÑO | CÓDIGO en Sobre mí (false lo oculta)
   board: true,     // 4. Modo Tablero arrastrable en Proyectos (false oculta el botón)
   scramble: true,  // 5. Texto que se descifra en la navegación
+  pantera3d: true, // Pantera del hero en 3D (false = imagen fija con ojos neón)
+  projectFx: true, // Efectos al pasar el cursor por los proyectos (letras/braille, pelotas, rutas)
 };
 
 /* Correo de contacto (se usa en "Copiar correo"). */
@@ -30,6 +32,12 @@ const EMAIL = "richardandreslam@gmail.com";
 
 /* WHATSAPP: número con código de país (57 = Colombia), sin espacios ni "+".
    El mensaje aparece ya escrito cuando el visitante abre el chat. */
+/* CORREO "Enviar mensaje" (Contacto): asunto y mensaje que aparecen ya escritos al abrir el correo. */
+const MAIL_MESSAGE = {
+  subject: "Colaboración desde tu portafolio Panthercode",
+  body: "¡Hola Richard!\n\nVi tu portafolio y me gustaría colaborar contigo.\n\nMi nombre:\nMi empresa o proyecto:\nLo que necesito:\n\n¡Gracias!",
+};
+
 const WHATSAPP = {
   number: "573016407222",
   label: "+57 301 640 7222",
@@ -51,11 +59,15 @@ const UNI_LOGO = null;
 /* PROYECTOS
    t: título · c: categoría (Branding, UI/UX, Web o Motion) · d: descripción · g: tags
    o: objetivo (opcional, se muestra en el modal) · i: iniciales de la miniatura (opcional; si no, se calculan del título)
+   img: ilustración del proyecto · fx: efecto al pasar el cursor ("vta", "baseball" o "setp"; opcional)
    El orden de este array es el orden en la cuadrícula y en "Proyectos recientes".
    Los filtros se crean solos a partir de las categorías que uses aquí. */
 const PROJECTS = [
   {
     t: "Visual Text Assist",
+    slug: "visual-text-assist",
+    img: "assets/proyectos/visual-text-assist.svg",
+    fx: "vta",
     c: "UI/UX",
     d: "Propuesta de aplicación móvil para ayudar a personas con ceguera a acceder a libros físicos mediante la cámara del celular y el reconocimiento de texto. Convierte el contenido escrito en audio y permite ajustar la velocidad de reproducción y el idioma.",
     o: "Crear una experiencia digital más accesible, práctica e inclusiva.",
@@ -63,6 +75,9 @@ const PROJECTS = [
   },
   {
     t: "Baseball Nation",
+    slug: "baseball-nation",
+    img: "assets/proyectos/baseball-nation.svg",
+    fx: "baseball",
     c: "UI/UX",
     d: "Propuesta de aplicación para aficionados al béisbol que reúne partidos, resultados, próximos encuentros, noticias y estadísticas de jugadores en un mismo lugar, pensada para personas de diferentes edades.",
     o: "Organizar la información deportiva en una experiencia digital atractiva y sencilla.",
@@ -70,6 +85,9 @@ const PROJECTS = [
   },
   {
     t: "SIU – SETP Santa Marta",
+    slug: "siu-setp",
+    img: "assets/proyectos/siu-setp.svg",
+    fx: "setp",
     i: "SIU",
     c: "UI/UX",
     d: "Interfaz para el Sistema de Información al Usuario del Sistema Estratégico de Transporte Público de Santa Marta, orientada a estudiantes universitarios y trabajadores que consultan rutas, paraderos y tiempos estimados de llegada de los buses.",
@@ -77,6 +95,72 @@ const PROJECTS = [
     g: ["UX/UI", "Movilidad urbana", "Diseño centrado en el usuario"],
   },
 ];
+
+/* CASOS DE ESTUDIO: página de detalle de cada proyecto (se abre al hacer clic en la tarjeta).
+   La clave es el slug del proyecto. Reemplaza los textos [entre corchetes].
+   galeria: rutas de imágenes de bocetos/pantallas (si está vacía se muestran espacios para agregarlas). */
+const CASES = {
+  "visual-text-assist": {
+    rol: "Diseño UX/UI",
+    anio: "[Año]",
+    herramientas: "Figma · [Otra]",
+    enfoque: "Accesibilidad digital",
+    reto: "Las personas con ceguera dependen de que un libro exista en braille o en audiolibro para poder leerlo. La mayoría de libros físicos no están en esos formatos, y muchas herramientas de lectura con cámara tienen interfaces pensadas para personas que sí ven.",
+    proceso: [
+      { t: "Investigación", d: "Entender cómo leen hoy las personas con discapacidad visual: lectores de pantalla, braille, audiolibros y las barreras de las apps existentes." },
+      { t: "Ideación", d: "Definir un flujo de tres pasos: apuntar la cámara, detectar el texto y escucharlo, con la menor cantidad de decisiones posible." },
+      { t: "Wireframes", d: "Botones grandes, alto contraste, orden lógico para el lector de pantalla y controles de velocidad e idioma siempre a la mano." },
+      { t: "Prototipo", d: "Prototipo navegable con los flujos de lectura, pausa, repetición y guardado." },
+      { t: "Validación", d: "[Cuenta aquí las pruebas con usuarios o la retroalimentación que recibiste.]" },
+    ],
+    resultados: [
+      { v: "3", l: "pasos para empezar a escuchar un libro" },
+      { v: "[X]", l: "[Tu métrica o aprendizaje]" },
+      { v: "[X]", l: "[Tu métrica o aprendizaje]" },
+    ],
+    galeria: [],
+  },
+  "baseball-nation": {
+    rol: "Diseño de aplicaciones",
+    anio: "[Año]",
+    herramientas: "Figma · [Otra]",
+    enfoque: "Experiencia de usuario",
+    reto: "Los aficionados al béisbol tienen la información repartida: marcadores en un lugar, noticias en otro y calendarios en otro, muchas veces de una sola liga. Seguir el béisbol del mundo entero exige saltar entre varias apps.",
+    proceso: [
+      { t: "Investigación", d: "Qué consultan los aficionados de distintas edades, con qué frecuencia y en qué momentos del partido." },
+      { t: "Arquitectura", d: "Tres pilares claros: partidos en vivo, próximos partidos y noticias, a un toque de distancia." },
+      { t: "Diseño visual", d: "Identidad en blanco, azul, rojo y dorado; el marcador en vivo como protagonista y una jerarquía fácil de leer." },
+      { t: "Prototipo", d: "Flujos de seguir un partido en vivo, programar recordatorios y leer noticias." },
+      { t: "Validación", d: "[Cuenta aquí las pruebas con usuarios o la retroalimentación que recibiste.]" },
+    ],
+    resultados: [
+      { v: "3", l: "secciones clave en un solo lugar" },
+      { v: "[X]", l: "[Ligas o países incluidos]" },
+      { v: "[X]", l: "[Tu métrica o aprendizaje]" },
+    ],
+    galeria: [],
+  },
+  "siu-setp": {
+    rol: "UX/UI",
+    anio: "[Año]",
+    herramientas: "Figma · [Otra]",
+    enfoque: "Movilidad urbana",
+    reto: "Estudiantes y trabajadores de Santa Marta pierden tiempo en los paraderos sin saber qué ruta les sirve ni cuándo llegará el siguiente bus del SETP.",
+    proceso: [
+      { t: "Investigación", d: "[Describe cómo conociste a los usuarios: encuestas, observación en paraderos, entrevistas.]" },
+      { t: "Mapa de viaje", d: "Del “¿a dónde voy?” al “me bajo aquí”: identificar los momentos de duda y espera." },
+      { t: "Arquitectura", d: "Buscador de destino, mapa con la ubicación de los buses en tiempo real y detalle de cada ruta con paraderos." },
+      { t: "Prototipo", d: "Flujos de buscar una ruta, ver el bus acercarse y recibir el tiempo estimado de llegada." },
+      { t: "Validación", d: "[Cuenta aquí las pruebas con usuarios o la retroalimentación que recibiste.]" },
+    ],
+    resultados: [
+      { v: "[X]", l: "[Minutos de espera ahorrados o similar]" },
+      { v: "[X]", l: "[Rutas cubiertas]" },
+      { v: "[X]", l: "[Tu métrica o aprendizaje]" },
+    ],
+    galeria: [],
+  },
+};
 
 /* HABILIDADES (n: nombre · v: nivel de 0 a 100). Se usan en las barras, el contador y la cinta. */
 const SKILLS = [
@@ -113,8 +197,7 @@ const ABOUT_STATS = [
 const TIMELINE = [
   { y: "[2024] — Actualidad", t: "Diseño Digital · Universidad Sergio Arboleda", d: "Sede Santa Marta. [Describe tu semestre actual y lo que estás aprendiendo.]" },
   { y: "[Año]", t: "Mis primeros proyectos como diseñador digital", d: "Visual Text Assist, Baseball Nation y SIU – SETP Santa Marta: propuestas UX/UI centradas en la accesibilidad, el deporte y la movilidad urbana." },
-  { y: "[Año]", t: "Bachillerato", d: "[Nombre del colegio y algún logro o interés relacionado con el diseño.]" },
-  { y: "Próxima meta", t: "[Tu siguiente objetivo]", d: "[Por ejemplo: prácticas en un estudio de diseño o tu primer cliente internacional.]", future: true },
+  { y: "Próxima meta", t: "Multinacional y clientes internacionales", d: "Trabajar en una empresa multinacional y colaborar como freelance con clientes del exterior, llevando mi diseño a proyectos de alcance global.", future: true },
 ];
 
 /* FRASE DE CIERRE de "Sobre mí". a: inicio de la frase · b: final resaltado en verde cursiva · s: línea de apoyo. */
@@ -156,6 +239,10 @@ const thumbColors = (index) => {
 };
 
 const thumbHtml = (project, index) => {
+  // Con imagen (img) se muestra la ilustración del proyecto; si no, la miniatura con iniciales
+  if (project.img) {
+    return `<div class="thumb thumb--img"><img src="${escapeHtml(project.img)}" alt="Vista de la app ${escapeHtml(project.t)}" width="800" height="500" loading="lazy"></div>`;
+  }
   const letters = project.i ?? initials(project.t);
   return `<div class="thumb" style="${thumbColors(index)}"><span>${escapeHtml(letters[0] ?? "")}<b>${escapeHtml(letters.slice(1))}</b></span></div>`;
 };
@@ -198,7 +285,7 @@ const marqueeHtml = (items) => {
 };
 
 const cardHtml = (project, index) => `
-  <button class="card" type="button" data-project="${index}" aria-label="Ver proyecto ${escapeHtml(project.t)}">
+  <button class="card" type="button" data-project="${index}"${project.fx ? ` data-fx="${escapeHtml(project.fx)}"` : ""} aria-label="Ver proyecto ${escapeHtml(project.t)}">
     ${thumbHtml(project, index)}
     <div class="card__body">
       <span class="tag">${escapeHtml(project.c)}</span>
@@ -282,7 +369,7 @@ const setFilter = (category) => {
 /* =========================================================
    5. ROUTER POR HASH
    ========================================================= */
-const VIEWS = ["inicio", "proyectos", "sobre-mi", "contacto"];
+const VIEWS = ["inicio", "proyectos", "sobre-mi", "contacto", "proyecto"];
 const VIEW_TITLES = {
   inicio: "Panthercode · Richard Díaz · Diseño Digital",
   proyectos: "Proyectos · Panthercode",
@@ -291,18 +378,22 @@ const VIEW_TITLES = {
 };
 let currentView = null;
 let navigating = false;
+let caseSlug = null;       // caso de estudio pedido en el hash (#proyecto/slug)
+let renderedCase = null;   // caso que está dibujado ahora
 
 /* Cambia de vista al instante: oculta las demás, vuelve arriba y reinicia sus animaciones. */
 const swapView = (name) => {
+  if (name === "proyecto") renderCase(caseSlug);
   const next = $(`[data-view="${name}"]`);
   $$(".view").forEach((view) => { view.hidden = view !== next; });
   window.scrollTo(0, 0);
   armView(next);
-  document.title = VIEW_TITLES[name];
+  document.title = name === "proyecto" ? `${PROJECTS.find((p) => p.slug === caseSlug).t} · Panthercode` : VIEW_TITLES[name];
 
   currentView = name;
+  const navName = name === "proyecto" ? "proyectos" : name;   // en un caso se marca "Proyectos"
   $$("[data-nav]").forEach((link) => {
-    const active = link.dataset.nav === name;
+    const active = link.dataset.nav === navName;
     link.classList.toggle("is-active", active);
     if (active) link.setAttribute("aria-current", "page"); else link.removeAttribute("aria-current");
   });
@@ -312,7 +403,9 @@ const swapView = (name) => {
 };
 
 const showView = async (name) => {
-  if (!$(`[data-view="${name}"]`) || name === currentView || navigating) return;
+  // Entre dos casos distintos también hay transición
+  const sameCase = name === "proyecto" && caseSlug === renderedCase;
+  if (!$(`[data-view="${name}"]`) || (name === currentView && (name !== "proyecto" || sameCase)) || navigating) return;
   // Primera carga o movimiento reducido: sin cortina
   if (!currentView || !ENABLE.curtain || reducedMotion.matches) { swapView(name); return; }
 
@@ -323,7 +416,12 @@ const showView = async (name) => {
 };
 
 const route = () => {
-  const name = location.hash.slice(1) || "inicio";
+  const [name, slug] = (location.hash.slice(1) || "inicio").split("/");
+  if (name === "proyecto") {
+    if (CASES[slug]) { caseSlug = slug; showView("proyecto"); }
+    else if (!currentView) showView("proyectos");
+    return;
+  }
   if (VIEWS.includes(name)) showView(name);
   else if (!currentView) showView("inicio");
 };
@@ -505,10 +603,61 @@ const initCarousel = () => {
   }, true);
 };
 
-/* Modal de proyecto */
+/* =========================================================
+   CASO DE ESTUDIO (página de detalle de cada proyecto)
+   ========================================================= */
+const renderCase = (slug) => {
+  const index = PROJECTS.findIndex((p) => p.slug === slug);
+  const p = PROJECTS[index];
+  const c = CASES[slug];
+  const next = PROJECTS[(index + 1) % PROJECTS.length];
+  const meta = [["Rol", c.rol], ["Año", c.anio], ["Herramientas", c.herramientas], ["Enfoque", c.enfoque]];
+  const gallery = c.galeria.length
+    ? c.galeria.map((src) => `<figure class="case__shot"><img src="${escapeHtml(src)}" alt="Pantalla de ${escapeHtml(p.t)}" loading="lazy"></figure>`).join("")
+    : ["Bocetos", "Wireframes", "Pantallas finales"].map((label) => `<figure class="case__shot case__shot--empty"><span class="tag">[ ${label} ]</span><p>Agrega aquí tus imágenes en <b>galeria</b> (CASES en main.js)</p></figure>`).join("");
+
+  $("#case").innerHTML = `
+    <a class="case__back link" href="#proyectos">← Todos los proyectos</a>
+    <p class="tag reveal">[ Caso de estudio · ${escapeHtml(p.c)} ]</p>
+    <h1 class="title title--page reveal" id="case-title">${escapeHtml(p.t)}</h1>
+    <p class="case__lead reveal">${escapeHtml(p.d)}</p>
+    <dl class="case__meta reveal">${meta.map(([k, v]) => `<div><dt class="tag">${k}</dt><dd>${escapeHtml(v)}</dd></div>`).join("")}</dl>
+    <figure class="case__hero reveal"${p.fx ? ` data-fx="${escapeHtml(p.fx)}"` : ""}><img src="${escapeHtml(p.img)}" alt="Vista de la app ${escapeHtml(p.t)}"></figure>
+
+    <section class="case__block case__block--split">
+      <div class="reveal"><p class="tag">[ 01 ]</p><h2 class="subtitle">El reto</h2><p>${escapeHtml(c.reto)}</p></div>
+      <div class="case__goal reveal"><p class="tag">[ Objetivo ]</p><p>${escapeHtml(p.o ?? "")}</p></div>
+    </section>
+
+    <section class="case__block">
+      <p class="tag reveal">[ 02 ]</p><h2 class="subtitle reveal">Proceso</h2>
+      <ol class="case__steps">${c.proceso.map((s, i) => `
+        <li class="case__step reveal" style="transition-delay:${i * 70}ms"><span class="case__num">0${i + 1}</span><h3>${escapeHtml(s.t)}</h3><p>${escapeHtml(s.d)}</p></li>`).join("")}
+      </ol>
+    </section>
+
+    <section class="case__block">
+      <p class="tag reveal">[ 03 ]</p><h2 class="subtitle reveal">Bocetos y pantallas</h2>
+      <div class="case__gallery reveal">${gallery}</div>
+    </section>
+
+    <section class="case__block">
+      <p class="tag reveal">[ 04 ]</p><h2 class="subtitle reveal">Resultados</h2>
+      <div class="case__results">${c.resultados.map((r) => `<div class="stat reveal"><strong>${escapeHtml(r.v)}</strong><span class="tag">${escapeHtml(r.l)}</span></div>`).join("")}</div>
+    </section>
+
+    <a class="case__next reveal" href="#proyecto/${escapeHtml(next.slug)}">
+      <span class="tag">Siguiente proyecto</span>
+      <span class="case__next-title">${escapeHtml(next.t)} <i aria-hidden="true">→</i></span>
+    </a>`;
+  renderedCase = slug;
+};
+
+/* Modal de proyecto (si el proyecto tiene caso de estudio, abre su página) */
 const openProject = (index) => {
   const project = PROJECTS[index];
   if (!project) return;
+  if (project.slug && CASES[project.slug]) { location.hash = `#proyecto/${project.slug}`; return; }
   $("#modal-thumb").innerHTML = thumbHtml(project, index);
   $("#modal-cat").textContent = `[ ${project.c} ]`;
   $("#modal-title").textContent = project.t;
@@ -566,16 +715,271 @@ const initMagnetic = () => {
   });
 };
 
-const initEmblemTilt = () => {
-  if (!finePointer.matches || reducedMotion.matches) return;
-  const emblem = $("#emblem");
-  window.addEventListener("mousemove", (e) => {
-    if (currentView !== "inicio" || window.scrollY > window.innerHeight) return;
-    const x = e.clientX / window.innerWidth - 0.5;
-    const y = e.clientY / window.innerHeight - 0.5;
-    emblem.style.transform = `rotateX(${(-y * 16).toFixed(2)}deg) rotateY(${(x * 22).toFixed(2)}deg)`;
-  });
+/* =========================================================
+   PANTERA 3D (hero)
+   La imagen assets/pantera.png se dibuja con WebGL usando un mapa de profundidad:
+   cada píxel se desplaza según qué tan cerca está (hocico > ojos > orejas), así la
+   cabeza gira en volumen hacia el cursor. Una luz fría sigue al cursor sobre el pelaje
+   y un contorno neón rodea la silueta. Los ojos (SVG encima) siguen al cursor.
+   ========================================================= */
+const PANTERA_SIZE = 360;          // tamaño de la imagen en píxeles
+const PANTERA_STRENGTH = 0.09;     // cuánto se desplaza el volumen (paralaje)
+
+const PANTERA_VERT = `attribute vec2 p; varying vec2 vUv;
+void main(){ vUv = p * .5 + .5; gl_Position = vec4(p, 0., 1.); }`;
+const PANTERA_FRAG = `precision mediump float;
+uniform sampler2D uImg, uDepth; uniform vec2 uMouse; uniform float uStrength, uGlow, uTime;
+varying vec2 vUv;
+float depthAt(vec2 uv){ return texture2D(uDepth, uv).r; }
+void main(){
+  // Paralaje iterativo según la profundidad
+  vec2 off = vec2(0.);
+  for (int i = 0; i < 4; i++) { float d = depthAt(vUv - off); off = uMouse * (d - .35) * uStrength; }
+  vec2 uv = vUv - off;
+  vec4 c = texture2D(uImg, uv);
+  // Normal desde el mapa de profundidad y luz que viene del cursor
+  float e = 1. / 360.;
+  float dx = depthAt(uv + vec2(e, 0.)) - depthAt(uv - vec2(e, 0.));
+  float dy = depthAt(uv + vec2(0., e)) - depthAt(uv - vec2(0., e));
+  vec3 n = normalize(vec3(-dx * 9., -dy * 9., 1.));
+  vec3 L = normalize(vec3(uMouse.x * .9, uMouse.y * .9, .75));
+  float diff = max(dot(n, L), 0.);
+  float spec = pow(max(dot(reflect(-L, n), vec3(0., 0., 1.)), 0.), 14.);
+  float lum = dot(c.rgb, vec3(.3, .59, .11));
+  c.rgb *= .78 + diff * .32;
+  c.rgb += vec3(.55, .62, .82) * spec * .28 * (.35 + lum);
+  // Contorno neón: borde de la silueta (transparencia de la imagen)
+  float e3 = 3. / 360.;
+  float ax = texture2D(uImg, uv + vec2(e3, 0.)).a - texture2D(uImg, uv - vec2(e3, 0.)).a;
+  float ay = texture2D(uImg, uv + vec2(0., e3)).a - texture2D(uImg, uv - vec2(0., e3)).a;
+  float edge = clamp(length(vec2(ax, ay)) * 2.2, 0., 1.) * c.a;
+  float pulse = .75 + .25 * sin(uTime * 6.);
+  c.rgb += vec3(.72, 1., .1) * edge * uGlow * pulse * 1.3;
+  gl_FragColor = c;
+}`;
+
+/* Mapa de profundidad (1 = cerca, 0 = fondo) hecho con volúmenes suaves sobre la anatomía */
+const buildPanteraDepth = (alpha) => {
+  const S = PANTERA_SIZE;
+  const raw = document.createElement("canvas");
+  raw.width = raw.height = S;
+  const c = raw.getContext("2d");
+  c.fillStyle = "#000";
+  c.fillRect(0, 0, S, S);
+  const blob = (x, y, rx, ry, v, op = "lighter") => {
+    c.save();
+    c.globalCompositeOperation = op;
+    c.translate(x, y);
+    c.scale(rx, ry);
+    const k = Math.round(v * 255);
+    const g = c.createRadialGradient(0, 0, 0, 0, 0, 1);
+    g.addColorStop(0, `rgb(${k},${k},${k})`);
+    g.addColorStop(0.65, `rgba(${k},${k},${k},.7)`);
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = g;
+    c.beginPath();
+    c.arc(0, 0, 1, 0, Math.PI * 2);
+    c.fill();
+    c.restore();
+  };
+  blob(40, 250, 110, 150, 0.22);                 // hombro (atrás)
+  blob(215, 170, 175, 160, 0.42);                // cabeza
+  blob(225, 70, 95, 50, 0.1);                    // frente
+  blob(272, 250, 85, 80, 0.26);                  // hocico
+  blob(220, 272, 70, 50, 0.12);                  // almohadilla de bigotes
+  blob(274, 232, 40, 28, 0.2);                   // nariz
+  blob(262, 310, 55, 30, 0.08);                  // mentón
+  blob(181, 141, 20, 13, 0.06, "difference");    // cuencas de los ojos
+  blob(304, 140, 18, 12, 0.06, "difference");
+
+  const depth = document.createElement("canvas");
+  depth.width = depth.height = S;
+  const d = depth.getContext("2d");
+  d.filter = "blur(7px)";
+  d.drawImage(raw, 0, 0);
+  d.filter = "none";
+  const px = d.getImageData(0, 0, S, S);
+  for (let i = 0; i < S * S; i++) {
+    const v = px.data[i * 4] * (alpha[i * 4 + 3] / 255);   // recorta por la silueta
+    px.data[i * 4] = px.data[i * 4 + 1] = px.data[i * 4 + 2] = v;
+    px.data[i * 4 + 3] = 255;
+  }
+  d.putImageData(px, 0, 0);
+  return { canvas: depth, data: px.data };
 };
+
+const initPantera = () => {
+  const root = $("#pantera");
+  const scene = $("#pantera-scene");
+  const canvas = $("#pantera-gl");
+  const eyes = $("#pantera-eyes");
+  const bloom = $("#pantera-bloom");
+  const gazes = $$(".pantera__gaze");
+  const pupils = $$(".pantera__pupil");
+  const lids = $$(".pantera__lid");
+  const neons = $$(".pantera__neon");
+
+  const setStatic = () => {
+    root.classList.add("is-static");
+    bloom.setAttribute("opacity", "0.7");
+  };
+
+  // Encendido del neón al cargar (parpadeo de letrero)
+  if (!reducedMotion.matches) {
+    const ignite = [{ opacity: 0 }, { opacity: 1, offset: 0.15 }, { opacity: 0.25, offset: 0.25 }, { opacity: 1, offset: 0.4 }, { opacity: 0.5, offset: 0.5 }, { opacity: 1 }];
+    neons.forEach((n) => n.animate(ignite, { duration: 1200, delay: 400, fill: "backwards" }));
+  }
+  if (!ENABLE.pantera3d || reducedMotion.matches) { setStatic(); return; }
+
+  const gl = canvas.getContext("webgl", { premultipliedAlpha: false, alpha: true, antialias: true });
+  if (!gl) { setStatic(); return; }
+
+  let uni = {};
+  let depthData = null;
+  let ready = false;
+
+  const resize = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width) return;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  };
+
+  const img = new Image();
+  img.src = "assets/pantera.png";
+  img.decode().then(() => {
+    const S = PANTERA_SIZE;
+    const tmp = document.createElement("canvas");
+    tmp.width = tmp.height = S;
+    const t = tmp.getContext("2d");
+    t.drawImage(img, 0, 0, S, S);
+    const depth = buildPanteraDepth(t.getImageData(0, 0, S, S).data);
+    depthData = depth.data;
+
+    const shader = (type, src) => {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+      return s;
+    };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, shader(gl.VERTEX_SHADER, PANTERA_VERT));
+    gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, PANTERA_FRAG));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const texture = (unit, source) => {
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    };
+    texture(0, img);
+    texture(1, depth.canvas);
+    ["uImg", "uDepth", "uMouse", "uStrength", "uGlow", "uTime"].forEach((n) => { uni[n] = gl.getUniformLocation(prog, n); });
+    gl.uniform1i(uni.uImg, 0);
+    gl.uniform1i(uni.uDepth, 1);
+    resize();
+    ready = true;
+    wake();
+  }).catch(setStatic);
+
+  /* Entrada: cursor/dedo en toda la pantalla y giroscopio en celulares que lo permiten */
+  let tx = 0;
+  let ty = 0;
+  let lastMove = 0;
+  const onPointer = (e) => {
+    const r = root.getBoundingClientRect();
+    tx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width * 0.6)) / (window.innerWidth * 0.45)));
+    ty = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height * 0.42)) / (window.innerHeight * 0.45)));
+    lastMove = performance.now();
+  };
+  window.addEventListener("pointermove", onPointer, { passive: true });
+  window.addEventListener("pointerdown", onPointer, { passive: true });
+  window.addEventListener("deviceorientation", (e) => {
+    if (e.gamma == null) return;
+    tx = Math.max(-1, Math.min(1, e.gamma / 30));
+    ty = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+    lastMove = performance.now();
+  });
+
+  /* Parpadeo ocasional */
+  const blink = () => {
+    if (visible) lids.forEach((l) => l.animate([{ transform: "scaleY(0)" }, { transform: "scaleY(1)" }, { transform: "scaleY(0)" }], { duration: 220, easing: "ease-in-out" }));
+    setTimeout(blink, 3200 + Math.random() * 3800);
+  };
+  setTimeout(blink, 2600);
+
+  /* Bucle: solo corre con el hero visible, en Inicio y con la pestaña abierta */
+  const cur = { x: 0, y: 0, ix: 0, iy: 0, near: 0, g: 0.06 };
+  let glow = 0;
+  let raf = 0;
+  let visible = false;
+  const start = performance.now();
+  const S = PANTERA_SIZE;
+
+  const frame = (now) => {
+    raf = 0;
+    if (!visible || currentView !== "inicio" || document.hidden) return;
+    let nx = tx;
+    let ny = ty;
+    if (now - lastMove > 3500) { nx = Math.sin(now / 1900) * 0.7; ny = Math.sin(now / 2700) * 0.4; }   // deambula si no hay cursor
+    cur.x += (nx - cur.x) * 0.07;
+    cur.y += (ny - cur.y) * 0.07;
+    cur.ix += (nx - cur.ix) * 0.22;
+    cur.iy += (ny - cur.iy) * 0.22;
+    cur.near += (Math.max(0, 1 - Math.hypot(nx, ny)) - cur.near) * 0.1;
+
+    // Neón siempre encendido; "respira" con un pulso suave
+    const pulse = 0.82 + Math.sin(now / 900) * 0.18;
+    glow += ((now - start > 600 ? 1 : 0) - glow) * 0.05;
+    bloom.setAttribute("opacity", (glow * (0.55 + pulse * 0.3)).toFixed(3));
+    cur.g += ((0.26 + cur.near * 0.14) * glow * pulse - cur.g) * 0.08;
+    root.style.setProperty("--g", cur.g.toFixed(3));
+
+    const breathe = 1 + Math.sin(now / 1200) * 0.007;
+    scene.style.transform = `rotateY(${(cur.x * 12).toFixed(2)}deg) rotateX(${(-cur.y * 9).toFixed(2)}deg) scale(${breathe.toFixed(4)})`;
+
+    if (ready) {
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform2f(uni.uMouse, cur.x, -cur.y);   // en WebGL el eje Y apunta hacia arriba
+      gl.uniform1f(uni.uStrength, PANTERA_STRENGTH);
+      gl.uniform1f(uni.uGlow, glow * 0.85);
+      gl.uniform1f(uni.uTime, now / 1000);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      // Los ojos acompañan el paralaje a la profundidad de la cara
+      const k = (depthData[(141 * S + 240) * 4] / 255 - 0.35) * PANTERA_STRENGTH * S;
+      eyes.setAttribute("transform", `translate(${(cur.x * k).toFixed(2)} ${(cur.y * k).toFixed(2)})`);
+    }
+    // Pupilas: siguen al cursor y se dilatan un poco al acercarse
+    gazes.forEach((g) => g.setAttribute("transform", `translate(${(cur.ix * 5).toFixed(2)} ${(cur.iy * 2.6).toFixed(2)})`));
+    pupils.forEach((p, i) => p.setAttribute("rx", ((i ? 2.2 : 2.4) * (0.7 + cur.near * 0.35)).toFixed(2)));
+    raf = requestAnimationFrame(frame);
+  };
+  const wake = () => { if (!raf && visible) raf = requestAnimationFrame(frame); };
+  wakePantera = wake;
+
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible) { resize(); wake(); }
+  }).observe(root);
+  document.addEventListener("visibilitychange", wake);
+  window.addEventListener("resize", () => { if (ready) resize(); });
+};
+// Se reasigna en initPantera; onViewChange lo llama al volver a Inicio
+let wakePantera = () => {};
 
 /* =========================================================
    9. CURSOR PERSONALIZADO Y GARRAS (solo con mouse)
@@ -1168,9 +1572,608 @@ const initScramble = () => {
   });
 };
 
+/* =========================================================
+   EFECTOS DE PROYECTOS (al pasar el cursor por una tarjeta con data-fx)
+   vta      → del texto a la voz: letras → braille → ondas de sonido
+   baseball → pelotas 3D (blanco, azul, rojo y dorado) que caen y rebotan
+   setp     → rutas de bus "Caribe samario" que se despliegan con buses
+   ========================================================= */
+let stopProjectFx = () => {};
+const initProjectFx = () => {
+  if (!ENABLE.projectFx || reducedMotion.matches) return;
+
+  const NS = "http://www.w3.org/2000/svg";
+  const AC = "#b8ff1a";
+
+  /* ---------- Capas sobre toda la pantalla (no bloquean clics) ---------- */
+  const canvas = document.createElement("canvas");
+  canvas.className = "fx-overlay";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  const routesSvg = document.createElementNS(NS, "svg");
+  routesSvg.setAttribute("class", "fx-routes");
+  routesSvg.innerHTML = `<defs><filter id="fx-route-glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5"/></filter></defs>`;
+  document.body.appendChild(routesSvg);
+
+  let W = 0, H = 0, dpr = 1;
+  const resize = () => {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    routesSvg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  };
+  resize();
+  window.addEventListener("resize", resize);
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const state = { active: null, source: null, wave: 0, letters: [], balls: [], spawnAcc: 0 };
+
+  /* =========================================================
+     1. VISUAL TEXT ASSIST: letras que se vuelven braille y luego sonido
+     ========================================================= */
+  const BRAILLE = {
+    a: [1], b: [1, 2], c: [1, 4], d: [1, 4, 5], e: [1, 5], f: [1, 2, 4], g: [1, 2, 4, 5], h: [1, 2, 5], i: [2, 4], j: [2, 4, 5],
+    k: [1, 3], l: [1, 2, 3], m: [1, 3, 4], n: [1, 3, 4, 5], o: [1, 3, 5], p: [1, 2, 3, 4], q: [1, 2, 3, 4, 5], r: [1, 2, 3, 5],
+    s: [2, 3, 4], t: [2, 3, 4, 5], u: [1, 3, 6], v: [1, 2, 3, 6], w: [2, 4, 5, 6], x: [1, 3, 4, 6], y: [1, 3, 4, 5, 6], z: [1, 3, 5, 6],
+  };
+  const TEXT = "visual text assist lee libros en voz alta para todos ".replace(/ /g, "");
+  let textIndex = 0;
+
+  const spawnLetter = (rect) => {
+    const ch = TEXT[textIndex++ % TEXT.length];
+    state.letters.push({
+      ch, x: rand(rect.left + 20, rect.right - 20), y: rand(rect.top + rect.height * 0.25, rect.top + rect.height * 0.55),
+      vx: rand(-90, 90), vy: rand(-170, -80), life: 0, max: rand(2.2, 3.2), size: rand(16, 34), wob: rand(0, 6.28),
+    });
+  };
+
+  const drawLetter = (l) => {
+    const p = l.life / l.max;
+    const a = Math.min(1, l.life * 4) * (p > 0.9 ? (1 - p) / 0.1 : 1);
+    ctx.save();
+    ctx.globalAlpha = a;
+    if (p < 0.42) {
+      // Letra del libro: de blanco a verde
+      const g = Math.min(1, p / 0.42);
+      ctx.fillStyle = `rgb(${Math.round(241 - g * 57)},${Math.round(244 + g * 11)},${Math.round(238 - g * 212)})`;
+      ctx.font = `700 ${l.size}px Georgia, serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = AC;
+      ctx.shadowBlur = 12 * g;
+      ctx.fillText(l.ch.toUpperCase(), l.x, l.y);
+    } else if (p < 0.72) {
+      // Celda braille real de esa letra (6 puntos)
+      const dots = BRAILLE[l.ch] || [];
+      const s = l.size * 0.22;
+      for (let n = 1; n <= 6; n++) {
+        const col = n <= 3 ? 0 : 1;
+        const row = (n - 1) % 3;
+        const on = dots.includes(n);
+        ctx.beginPath();
+        ctx.arc(l.x + (col - 0.5) * s * 2.4, l.y + (row - 1) * s * 2.4, on ? s * 0.85 : s * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = on ? AC : "rgba(184,255,26,.18)";
+        ctx.shadowColor = AC;
+        ctx.shadowBlur = on ? 10 : 0;
+        ctx.fill();
+      }
+    } else {
+      // Se convierte en sonido: anillo que se expande
+      const q = (p - 0.72) / 0.28;
+      ctx.strokeStyle = AC;
+      ctx.lineWidth = 2 * (1 - q) + 0.5;
+      ctx.shadowColor = AC;
+      ctx.shadowBlur = 8;
+      for (let k = 0; k < 2; k++) {
+        ctx.beginPath();
+        ctx.arc(l.x, l.y, 4 + (q + k * 0.25) * l.size * 1.6, 0, Math.PI * 2);
+        ctx.globalAlpha = a * (1 - q) * (k ? 0.5 : 1);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  };
+
+  // Onda de voz que cruza la pantalla
+  const drawWave = (t) => {
+    if (state.wave < 0.01) return;
+    const y0 = state.source ? state.source.top + state.source.height * 0.35 : H / 2;
+    ctx.save();
+    ctx.globalAlpha = state.wave * 0.9;
+    ctx.strokeStyle = AC;
+    ctx.shadowColor = AC;
+    ctx.shadowBlur = 14;
+    for (let layer = 0; layer < 3; layer++) {
+      ctx.beginPath();
+      ctx.lineWidth = layer === 0 ? 2.4 : 1;
+      ctx.globalAlpha = state.wave * (layer === 0 ? 0.85 : 0.35);
+      for (let x = 0; x <= W; x += 6) {
+        const env = Math.sin((x / W) * Math.PI);                    // más alta al centro
+        const y = y0 + env * state.wave * (
+          Math.sin(x * 0.018 + t * 6 + layer) * 26 +
+          Math.sin(x * 0.047 - t * 9) * 14 +
+          Math.sin(x * 0.006 + t * 2) * 18) * (1 - layer * 0.25);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+  };
+
+  /* =========================================================
+     2. BASEBALL NATION: pelotas 3D que caen y rebotan
+     ========================================================= */
+  // Colores de la app Baseball Nation: blanco, azul, rojo y dorado
+  const BALL_GLOWS = ["rgba(31,75,184,.75)", "rgba(212,42,42,.7)", "rgba(230,180,40,.8)"];
+  const spawnBall = () => {
+    const r = rand(14, 40);                 // tamaño = profundidad (las pequeñas parecen lejanas)
+    state.balls.push({
+      glow: BALL_GLOWS[Math.floor(Math.random() * BALL_GLOWS.length)],
+      gold: Math.random() < 0.18,           // algunas pelotas doradas, como trofeo
+      x: rand(r, W - r), y: -r - rand(0, 80), vx: rand(-70, 70), vy: rand(80, 220),
+      r, spin: rand(-6, 6), angle: rand(0, 6.28), tumble: rand(0, 6.28), tumbleV: rand(2, 5),
+      bounces: 0, life: 0, fade: 1,
+    });
+  };
+
+  const drawBall = (b) => {
+    const { x, y, r } = b;
+    ctx.save();
+    ctx.globalAlpha = b.fade * (0.55 + (r / 40) * 0.45);
+    // Sombra en el suelo
+    const floor = H - 6;
+    const near = Math.max(0, 1 - (floor - y) / 500);
+    ctx.fillStyle = `rgba(0,0,0,${0.35 * near})`;
+    ctx.beginPath();
+    ctx.ellipse(x, floor, r * (0.6 + near * 0.5), r * 0.18, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Esfera con luz arriba a la izquierda
+    const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
+    if (b.gold) {
+      g.addColorStop(0, "#fff6cf");
+      g.addColorStop(0.5, "#e6b428");
+      g.addColorStop(1, "#8a6410");
+    } else {
+      g.addColorStop(0, "#ffffff");
+      g.addColorStop(0.55, "#eef0f4");
+      g.addColorStop(1, "#9aa0ad");
+    }
+    ctx.fillStyle = g;
+    ctx.shadowColor = b.glow;
+    ctx.shadowBlur = 22;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    // Costuras rojas: giran y "tumban" en 3D (escala en X con el coseno)
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.translate(x, y);
+    ctx.rotate(b.angle);
+    ctx.scale(Math.cos(b.tumble) * 0.9 + 0.1, 1);
+    ctx.strokeStyle = b.gold ? "#1f4bb8" : "#d42a2a";   // costuras rojas (azules en las doradas)
+    ctx.lineWidth = Math.max(1, r * 0.06);
+    for (const side of [-1, 1]) {
+      // Cada costura es un arco de un círculo vecino que entra en la pelota
+      const cx = side * r * 1.32;
+      const rr = r * 0.95;
+      const base = side === -1 ? 0 : Math.PI;
+      ctx.beginPath();
+      ctx.arc(cx, 0, rr, base - 0.75, base + 0.75, false);
+      ctx.lineWidth = Math.max(1, r * 0.06);
+      ctx.stroke();
+      // Puntadas
+      for (let k = -4; k <= 4; k++) {
+        const a = base + k * 0.17;
+        const px = cx + Math.cos(a) * rr;
+        const py = Math.sin(a) * rr;
+        const nx = Math.cos(a), ny = Math.sin(a);
+        ctx.beginPath();
+        ctx.moveTo(px - nx * r * 0.09 - ny * r * 0.05, py - ny * r * 0.09 + nx * r * 0.05);
+        ctx.lineTo(px + nx * r * 0.09 - ny * r * 0.05, py + ny * r * 0.09 + nx * r * 0.05);
+        ctx.lineWidth = Math.max(0.8, r * 0.04);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  };
+
+  const updateBalls = (dt) => {
+    const G = 1500;
+    const floor = H - 6;
+    for (const b of state.balls) {
+      b.life += dt;
+      b.vy += G * dt * (0.6 + (b.r / 40) * 0.4);
+      b.x += b.vx * dt;
+      b.y += b.vy * dt;
+      b.angle += b.spin * dt;
+      b.tumble += b.tumbleV * dt;
+      if (b.y + b.r > floor) {
+        b.y = floor - b.r;
+        b.vy *= -0.52;
+        b.vx *= 0.82;
+        b.spin *= 0.8;
+        b.bounces++;
+      }
+      if (b.x < b.r || b.x > W - b.r) { b.vx *= -0.8; b.x = Math.max(b.r, Math.min(W - b.r, b.x)); }
+      if (b.bounces >= 3 || state.active !== "baseball") b.fade -= dt * (state.active === "baseball" ? 0.8 : 1.6);
+    }
+    state.balls = state.balls.filter((b) => b.fade > 0);
+  };
+
+  /* =========================================================
+     3. SIU – SETP: rutas de bus que se despliegan sobre la pantalla
+     ========================================================= */
+  // Paleta "Caribe samario": mar turquesa, coral, atardecer, arena, océano y palma
+  const ROUTE_COLORS = ["#00c2c7", "#ff6b5b", "#ff9f1c", "#ffd166", "#3a86ff", "#2ec4b6"];
+  let routes = [];
+  let routesTimer = 0;
+
+  // Ruta tipo plano urbano: tramos horizontales/verticales con esquinas redondeadas
+  const routePath = (i) => {
+    const pts = [];
+    const fromLeft = i % 2 === 0;
+    let x = fromLeft ? -20 : W + 20;
+    let y = rand(H * 0.12, H * 0.88);
+    pts.push([x, y]);
+    let horizontal = true;
+    while (fromLeft ? x < W + 20 : x > -20) {
+      if (horizontal) x += (fromLeft ? 1 : -1) * rand(W * 0.12, W * 0.26);
+      else y = Math.max(H * 0.08, Math.min(H * 0.92, y + rand(-H * 0.3, H * 0.3)));
+      pts.push([x, y]);
+      horizontal = !horizontal;
+    }
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let k = 1; k < pts.length - 1; k++) {
+      const [px, py] = pts[k - 1], [cx, cy] = pts[k], [nx, ny] = pts[k + 1];
+      const r = 18;
+      const inX = cx - Math.sign(cx - px) * Math.min(r, Math.abs(cx - px) / 2);
+      const inY = cy - Math.sign(cy - py) * Math.min(r, Math.abs(cy - py) / 2);
+      const outX = cx + Math.sign(nx - cx) * Math.min(r, Math.abs(nx - cx) / 2);
+      const outY = cy + Math.sign(ny - cy) * Math.min(r, Math.abs(ny - cy) / 2);
+      d += ` L${inX},${inY} Q${cx},${cy} ${outX},${outY}`;
+    }
+    d += ` L${pts[pts.length - 1][0]},${pts[pts.length - 1][1]}`;
+    return d;
+  };
+
+  const showRoutes = () => {
+    clearTimeout(routesTimer);
+    routesSvg.querySelectorAll(".fx-route").forEach((g) => g.remove());
+    routes = [];
+    const n = W < 700 ? 4 : 6;
+    for (let i = 0; i < n; i++) {
+      const color = ROUTE_COLORS[i % ROUTE_COLORS.length];
+      const g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "fx-route");
+      const d = routePath(i);
+      g.innerHTML = `
+        <path d="${d}" fill="none" stroke="${color}" stroke-width="12" opacity=".18" filter="url(#fx-route-glow)"/>
+        <path class="fx-line" d="${d}" fill="none" stroke="${color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+      routesSvg.appendChild(g);
+      const line = g.querySelector(".fx-line");
+      const glow = g.firstElementChild;
+      const len = line.getTotalLength();
+      for (const p of [line, glow]) {
+        p.style.strokeDasharray = `${len}`;
+        p.style.strokeDashoffset = `${len}`;
+        p.style.transition = `stroke-dashoffset 1.3s cubic-bezier(.6,0,.2,1) ${i * 0.12}s`;
+      }
+      // Paraderos a lo largo de la ruta
+      const stops = [];
+      const count = Math.max(3, Math.round(len / 170));
+      for (let k = 1; k < count; k++) {
+        const pt = line.getPointAtLength((len * k) / count);
+        const c = document.createElementNS(NS, "circle");
+        c.setAttribute("cx", pt.x);
+        c.setAttribute("cy", pt.y);
+        c.setAttribute("r", "5");
+        c.setAttribute("fill", "#0a0c0b");
+        c.setAttribute("stroke", color);
+        c.setAttribute("stroke-width", "2.5");
+        c.style.transformOrigin = `${pt.x}px ${pt.y}px`;
+        c.style.transform = "scale(0)";
+        c.style.transition = `transform .35s cubic-bezier(.3,1.6,.5,1) ${i * 0.12 + (1.3 * k) / count}s`;
+        g.appendChild(c);
+        stops.push(c);
+      }
+      // Etiqueta de la ruta
+      const start = line.getPointAtLength(Math.min(90, len * 0.1));
+      const label = document.createElementNS(NS, "g");
+      label.innerHTML = `<rect x="${start.x - 34}" y="${start.y - 34}" width="68" height="22" rx="11" fill="#0a0c0b" stroke="${color}"/>
+        <text x="${start.x}" y="${start.y - 19}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="500" fill="${color}">RUTA ${[7, 12, 3, 21, 9, 15][i]}</text>`;
+      label.style.opacity = "0";
+      label.style.transition = `opacity .4s ${i * 0.12 + 0.3}s`;
+      g.appendChild(label);
+      // Buses que recorren la ruta
+      const buses = [0, 0.5].slice(0, len > 900 ? 2 : 1).map((offset) => {
+        const bus = document.createElementNS(NS, "g");
+        bus.innerHTML = `<circle r="14" fill="${color}" opacity=".22"/><rect x="-11" y="-8" width="22" height="16" rx="4" fill="${color}" stroke="#0a0c0b" stroke-width="1.5"/><rect x="-8" y="-5" width="16" height="5" rx="1" fill="#0a0c0b"/>`;
+        bus.style.opacity = "0";
+        bus.style.transition = "opacity .4s";
+        g.appendChild(bus);
+        return { el: bus, offset, speed: rand(0.05, 0.09) };
+      });
+      routes.push({ g, line, glow, len, stops, label, buses });
+    }
+    // Siguiente cuadro: arranca el dibujo de las líneas
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      routes.forEach((r) => {
+        r.line.style.strokeDashoffset = "0";
+        r.glow.style.strokeDashoffset = "0";
+        r.stops.forEach((s) => { s.style.transform = "scale(1)"; });
+        r.label.style.opacity = "1";
+        r.buses.forEach((b) => { setTimeout(() => { b.el.style.opacity = "1"; }, 1200); });
+      });
+    }));
+  };
+
+  const hideRoutes = () => {
+    routes.forEach((r) => {
+      r.line.style.transition = r.glow.style.transition = "stroke-dashoffset .7s cubic-bezier(.6,0,.2,1)";
+      r.line.style.strokeDashoffset = r.glow.style.strokeDashoffset = `${r.len}`;
+      r.stops.forEach((s) => { s.style.transition = "transform .25s"; s.style.transform = "scale(0)"; });
+      r.label.style.transition = "opacity .25s";
+      r.label.style.opacity = "0";
+      r.buses.forEach((b) => { b.el.style.opacity = "0"; });
+    });
+    const old = routes;
+    routesTimer = setTimeout(() => old.forEach((r) => r.g.remove()), 800);
+    routes = [];
+  };
+
+  const updateBuses = (t) => {
+    routes.forEach((r) => r.buses.forEach((b) => {
+      const pos = ((t * b.speed + b.offset) % 1) * r.len;
+      const pt = r.line.getPointAtLength(pos);
+      b.el.setAttribute("transform", `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`);
+    }));
+  };
+
+  /* =========================================================
+     BUCLE: solo corre mientras hay algo que dibujar
+     ========================================================= */
+  let raf = 0;
+  let last = 0;
+  const loop = (now) => {
+    const t = now / 1000;
+    const dt = Math.min(0.05, (now - (last || now)) / 1000);
+    last = now;
+    ctx.clearRect(0, 0, W, H);
+
+    if (state.active === "vta" && state.source) {
+      state.spawnAcc += dt * 22;
+      while (state.spawnAcc > 1) { spawnLetter(state.source); state.spawnAcc--; }
+    }
+    if (state.active === "baseball" && state.balls.length < 45) {
+      state.spawnAcc += dt * 7;
+      while (state.spawnAcc > 1) { spawnBall(); state.spawnAcc--; }
+    }
+
+    state.wave += ((state.active === "vta" ? 1 : 0) - state.wave) * 0.08;
+    drawWave(t);
+    for (const l of state.letters) {
+      l.life += dt;
+      l.x += (l.vx + Math.sin(l.life * 3 + l.wob) * 30) * dt;
+      l.y += l.vy * dt;
+      drawLetter(l);
+    }
+    state.letters = state.letters.filter((l) => l.life < l.max);
+
+    updateBalls(dt);
+    state.balls.forEach(drawBall);
+    updateBuses(t);
+
+    const busy = state.active || state.letters.length || state.balls.length || state.wave > 0.01;
+    raf = busy ? requestAnimationFrame(loop) : 0;
+    if (!raf) { last = 0; ctx.clearRect(0, 0, W, H); }
+  };
+  const wake = () => { if (!raf) raf = requestAnimationFrame(loop); };
+
+  const activate = (type, el) => {
+    if (reducedMotion.matches) return;
+    if (state.active === "setp" && type !== "setp") hideRoutes();
+    state.active = type;
+    state.source = el.getBoundingClientRect();
+    state.spawnAcc = type === "baseball" ? 3 : 0;   // las primeras pelotas salen al instante
+    if (type === "setp") showRoutes();
+    wake();
+  };
+  const deactivate = (type) => {
+    if (state.active !== type) return;
+    if (type === "setp") hideRoutes();
+    state.active = null;
+  };
+
+
+  /* Delegación: sirve para las tarjetas de la cuadrícula, el carrusel y el tablero */
+  let hovered = null;
+  document.addEventListener("pointerover", (e) => {
+    if (e.pointerType !== "mouse") return;
+    const card = e.target.closest?.("[data-fx]");
+    if (!card || card === hovered) return;
+    if (hovered) deactivate(hovered.dataset.fx);
+    hovered = card;
+    activate(card.dataset.fx, card);
+  });
+  document.addEventListener("pointerout", (e) => {
+    if (e.pointerType !== "mouse" || !hovered) return;
+    if (e.relatedTarget && hovered.contains(e.relatedTarget)) return;
+    deactivate(hovered.dataset.fx);
+    hovered = null;
+  });
+  // En táctil: un toque lo muestra unos segundos
+  let touchTimer = 0;
+  document.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    const card = e.target.closest?.("[data-fx]");
+    if (!card) return;
+    activate(card.dataset.fx, card);
+    clearTimeout(touchTimer);
+    touchTimer = setTimeout(() => deactivate(card.dataset.fx), 2600);
+  });
+  stopProjectFx = () => { if (state.active) deactivate(state.active); hovered = null; };
+};
+
+/* =========================================================
+   PANTALLA DE CARGA CINEMATOGRÁFICA
+   Ojos en la oscuridad → la pantera emerge → escaneo neón → PANTHERCODE se descifra
+   → la pantera se lanza y la pantalla se abre como una mandíbula.
+   Devuelve una promesa que se cumple al abrirse (para la entrada de PANTHERCODE 3D).
+   ========================================================= */
+const LOADER_MESSAGES = ["Despertando a la pantera", "Afinando los bigotes", "Encendiendo el neón", "¡Lista!"];
+
+const initLoader = () => new Promise((resolve) => {
+  const loader = $("#loader");
+  if (!loader) { resolve(); return; }
+  // Solo la primera vez por visita (pestaña); al navegar o recargar no se repite
+  let seen = false;
+  try { seen = sessionStorage.getItem("pc-loader") === "1"; sessionStorage.setItem("pc-loader", "1"); } catch { /* sin almacenamiento: se muestra */ }
+  if (seen && !new URLSearchParams(location.search).has("intro")) { loader.remove(); resolve(); return; }
+  document.documentElement.classList.add("is-loading");
+  const panther = $("#loader-panther");
+  const bar = $("#loader-bar");
+  const pct = $("#loader-pct");
+  const msg = $("#loader-msg");
+  const pantherTxt = $("#loader-panther-txt");
+  const codeTxt = $("#loader-code-txt");
+  const quick = reducedMotion.matches;
+  const DURATION = quick ? 400 : 2800;
+
+  // Chispas verdes que flotan alrededor de la pantera
+  if (!quick) {
+    $("#loader-sparks").innerHTML = Array.from({ length: 26 }, () => {
+      const s = (2 + Math.random() * 3).toFixed(1);
+      return `<i style="--x:${(15 + Math.random() * 75).toFixed(1)}%;--s:${s}px;--d:${(0.8 + Math.random() * 2.2).toFixed(2)}s;--dur:${(1.6 + Math.random() * 1.6).toFixed(2)}s;--dx:${((Math.random() - 0.5) * 60).toFixed(0)}px"></i>`;
+    }).join("");
+  }
+
+  // Texto que se descifra (como código) entre "from" y "to" ms
+  const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&/<>_0123456789";
+  const decode = (el, word, t, from, to) => {
+    const p = Math.max(0, Math.min(1, (t - from) / (to - from)));
+    const solved = Math.floor(p * word.length);
+    el.textContent = p === 0 ? "" : [...word].map((ch, i) => (i < solved ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])).join("");
+  };
+
+  let loaded = document.readyState === "complete";
+  window.addEventListener("load", () => { loaded = true; });
+  const start = performance.now();
+  let lit = false;
+
+  const finish = () => {
+    loader.classList.add("is-lunge");                        // la pantera se lanza
+    setTimeout(() => {
+      loader.classList.add("is-exit");                        // la pantalla se abre
+      document.documentElement.classList.remove("is-loading");
+      resolve();
+      setTimeout(() => loader.remove(), 1300);
+    }, quick ? 0 : 380);
+  };
+
+  const tick = (now) => {
+    const t = now - start;
+    const ease = (x) => 1 - Math.pow(1 - Math.max(0, Math.min(1, x)), 3);
+    // La cara emerge desde los ojos y se ilumina
+    const reveal = quick ? 1 : ease((t - 650) / 1300);
+    panther.style.setProperty("--r", `${(reveal * 85).toFixed(1)}%`);
+    panther.style.setProperty("--lit", (0.2 + reveal * 0.8).toFixed(3));
+    // PANTHER se descifra; luego CODE se enciende como neón
+    decode(pantherTxt, "PANTHER", t, quick ? 0 : 1000, quick ? 1 : 1700);
+    decode(codeTxt, "CODE", t, quick ? 0 : 1500, quick ? 1 : 1950);
+    if (!lit && t > (quick ? 0 : 1950)) { codeTxt.classList.add("is-lit"); lit = true; }
+    // Progreso (no llega al 100% hasta que todo cargó)
+    const p = loaded ? Math.min(1, t / DURATION) : Math.min(0.92, t / DURATION);
+    bar.style.transform = `scaleX(${p.toFixed(3)})`;
+    pct.textContent = `${Math.round(p * 100)}%`;
+    msg.textContent = LOADER_MESSAGES[Math.min(LOADER_MESSAGES.length - 1, Math.floor(p * LOADER_MESSAGES.length))];
+    if (p >= 1) { finish(); return; }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+});
+
+/* =========================================================
+   FORMULARIO DE CONTACTO
+   Guarda el mensaje en la tabla "mensajes" de Supabase; lo lees en el panel /admin.
+   La publishable key es pública por diseño: la tabla solo permite insertar (RLS).
+   ========================================================= */
+const SUPABASE = {
+  url: "https://eyvoslepyjtxzkqvojxn.supabase.co",
+  key: "sb_publishable_5UFDTxoQDlosGQtbs8iFRQ_dB1ZksJR",
+};
+
+const saveMessage = async (row) => {
+  const res = await fetch(`${SUPABASE.url}/rest/v1/mensajes`, {
+    method: "POST",
+    headers: { apikey: SUPABASE.key, "Content-Type": "application/json", Prefer: "return=minimal" },
+    body: JSON.stringify(row),
+  });
+  if (!res.ok) throw new Error(`Supabase ${res.status}`);
+};
+
+const initContactForm = () => {
+  const form = $("#cform");
+  if (!form) return;
+  const error = $("#cform-error");
+  const LABELS = { nombre: "tu nombre", correo: "un correo válido", mensaje: "un mensaje (mínimo 10 caracteres)" };
+  // Al escribir, el campo deja de marcarse en rojo
+  form.addEventListener("input", (e) => {
+    e.target.closest(".field")?.classList.remove("is-invalid");
+    if (!form.querySelector(".is-invalid")) error.textContent = "";
+  });
+  $("#cform-again").addEventListener("click", () => {
+    $("#cform-done").hidden = true;
+    form.elements.nombre.focus();
+  });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    // Campo trampa: los bots lo llenan, las personas no lo ven
+    if (String(data.get("web") || "")) return;
+    const nombre = String(data.get("nombre") || "").trim();
+    const correo = String(data.get("correo") || "").trim();
+    const mensaje = String(data.get("mensaje") || "").trim();
+    form.querySelectorAll(".field").forEach((f) => f.classList.remove("is-invalid"));
+    const bad = [];
+    if (!nombre) bad.push("nombre");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) bad.push("correo");
+    if (mensaje.length < 10) bad.push("mensaje");
+    if (bad.length) {
+      bad.forEach((n) => form.elements[n].closest(".field").classList.add("is-invalid"));
+      error.textContent = `Falta ${bad.map((n) => LABELS[n]).join(", ")}.`;
+      form.elements[bad[0]].focus();
+      return;
+    }
+    error.textContent = "";
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    button.querySelector("span").textContent = "Enviando…";
+    try {
+      await saveMessage({ nombre, correo, tipo: String(data.get("tipo") || "Otro"), mensaje });
+      $("#cform-name").textContent = nombre;
+      $("#cform-mail").textContent = correo;
+      $("#cform-done").hidden = false;
+      showToast("Mensaje enviado");
+      form.reset();
+    } catch {
+      error.textContent = `No se pudo enviar. Escríbeme a ${EMAIL} o por WhatsApp.`;
+    } finally {
+      button.disabled = false;
+      button.querySelector("span").textContent = "Enviar mensaje";
+    }
+  });
+};
+
 /* Se llama en cada cambio de vista */
 const onViewChange = (name) => {
+  stopProjectFx();
   setDotsActive(name === "inicio");
+  if (name === "inicio") wakePantera();
 };
 
 /* =========================================================
@@ -1181,6 +2184,10 @@ const init = () => {
   renderStatic();
   renderFilters();
   renderGrid();
+
+  // "Enviar mensaje": abre el correo personal con asunto y mensaje base
+  const mailUrl = `mailto:${EMAIL}?subject=${encodeURIComponent(MAIL_MESSAGE.subject)}&body=${encodeURIComponent(MAIL_MESSAGE.body)}`;
+  $$("[data-mail-message]").forEach((link) => { link.href = mailUrl; });
 
   // Enlaces de WhatsApp con el número y el mensaje de WHATSAPP
   const waUrl = `https://wa.me/${WHATSAPP.number}?text=${encodeURIComponent(WHATSAPP.message)}`;
@@ -1198,7 +2205,7 @@ const init = () => {
   initCarousel();
   initModal();
   initMagnetic();
-  initEmblemTilt();
+  initPantera();
   initCursor();
 
   // Interacciones nuevas (desactívalas en ENABLE, al inicio del archivo)
@@ -1206,6 +2213,11 @@ const init = () => {
   initSplit();
   initBoard();
   initScramble();
+  initProjectFx();
+  // PANTHERCODE 3D hace su entrada cuando termina la pantalla de carga
+  const loaderDone = initLoader();
+  if (window.initWordmark3D) initWordmark3D($("#w3d"), undefined, { ready: loaderDone });
+  initContactForm();
 
   document.addEventListener("click", (e) => {
     const target = e.target;

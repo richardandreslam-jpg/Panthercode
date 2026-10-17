@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="SIU SETP Santa Marta: rutas y buses en tiempo real">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1718"/><stop offset="1" stop-color="#030708"/></linearGradient>
+  <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#00c2c7" stop-opacity=".2"/><stop offset="1" stop-color="#00c2c7" stop-opacity="0"/></radialGradient>
+  <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#fff" stroke-opacity=".035"/></pattern>
+  <clipPath id="screen"><rect x="292" y="40" width="216" height="420" rx="26"/></clipPath>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity=".6"/></filter>
+</defs>
+<rect width="800" height="500" fill="url(#bg)"/>
+<rect width="800" height="500" fill="url(#grid)"/>
+<circle cx="400" cy="250" r="270" fill="url(#glow)"/>
+<g filter="url(#shadow)">
+  <rect x="282" y="28" width="236" height="444" rx="36" fill="#0a0c0b" stroke="#2d342e" stroke-width="2"/>
+  <rect x="292" y="40" width="216" height="420" rx="26" fill="#0a1415"/>
+</g>
+<g clip-path="url(#screen)">
+
+  <rect x="292" y="40" width="216" height="420" fill="#0a1415"/>
+  <!-- Mar (bahía de Santa Marta) -->
+  <path d="M292,40 L350,40 Q330,90 340,140 Q350,190 300,230 L292,236 Z" fill="#0c1a22"/>
+  <!-- Calles -->
+  <g stroke="#17282a" stroke-linecap="round" fill="none">
+    <path d="M292,250 H508 M292,174 H508 M292,300 H508 M300,96 H508" stroke-width="7"/>
+    <path d="M318,40 V460 M394,40 V460 M478,40 V460 M436,40 V460 M356,120 V460" stroke-width="5"/>
+    <path d="M292,330 L508,210" stroke-width="4" stroke="#17282a"/>
+  </g>
+  <path id="route" d="M318,330 L318,262 Q318,250 330,250 L382,250 Q394,250 394,238 L394,186 Q394,174 406,174 L466,174 Q478,174 478,162 L478,96" fill="none" stroke="#00c2c7" stroke-width="10" opacity=".18" filter="url(#soft)"/>
+  <path d="M318,330 L318,262 Q318,250 330,250 L382,250 Q394,250 394,238 L394,186 Q394,174 406,174 L466,174 Q478,174 478,162 L478,96" fill="none" stroke="#00c2c7" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="318" cy="300" r="5" fill="#0a0c0b" stroke="#f1f4ee" stroke-width="2"/><circle cx="356" cy="250" r="5" fill="#0a0c0b" stroke="#f1f4ee" stroke-width="2"/><circle cx="394" cy="212" r="5" fill="#0a0c0b" stroke="#f1f4ee" stroke-width="2"/><circle cx="436" cy="174" r="5" fill="#0a0c0b" stroke="#f1f4ee" stroke-width="2"/><circle cx="478" cy="128" r="5" fill="#0a0c0b" stroke="#f1f4ee" stroke-width="2"/>
+  <g>
+    <animateMotion dur="12s" begin="0s" repeatCount="indefinite" rotate="0" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath href="#route"/></animateMotion>
+    <circle r="13" fill="#00c2c7" opacity=".25"><animate attributeName="r" values="11;17;11" dur="1.6s" repeatCount="indefinite"/></circle>
+    <rect x="-10" y="-8" width="20" height="16" rx="4" fill="#ff9f1c" stroke="#0a0c0b" stroke-width="1.5"/>
+    <rect x="-7" y="-5" width="14" height="5" rx="1" fill="#0a0c0b"/>
+    <text x="0" y="-14" font-family="Consolas, 'Courier New', monospace" font-size="8" font-weight="700" fill="#f1f4ee" text-anchor="middle" letter-spacing="0" opacity="1">214</text>
+  </g><g>
+    <animateMotion dur="12s" begin="-6s" repeatCount="indefinite" rotate="0" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath href="#route"/></animateMotion>
+    <circle r="13" fill="#00c2c7" opacity=".25"><animate attributeName="r" values="11;17;11" dur="1.6s" repeatCount="indefinite"/></circle>
+    <rect x="-10" y="-8" width="20" height="16" rx="4" fill="#ff9f1c" stroke="#0a0c0b" stroke-width="1.5"/>
+    <rect x="-7" y="-5" width="14" height="5" rx="1" fill="#0a0c0b"/>
+    <text x="0" y="-14" font-family="Consolas, 'Courier New', monospace" font-size="8" font-weight="700" fill="#f1f4ee" text-anchor="middle" letter-spacing="0" opacity="1">219</text>
+  </g>
+  <!-- Tu ubicación -->
+  <circle cx="356" cy="250" r="14" fill="#5ab0ff" opacity=".2"><animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite"/></circle>
+  <circle cx="356" cy="250" r="6" fill="#5ab0ff" stroke="#fff" stroke-width="2"/>
+  <!-- Buscador -->
+  <rect x="304" y="62" width="192" height="30" rx="15" fill="#0b0d0c" stroke="#1f3a3c"/>
+  <circle cx="320" cy="77" r="5" fill="none" stroke="#93abab" stroke-width="1.8"/><path d="M324,81 l4,4" stroke="#93abab" stroke-width="1.8"/>
+  <text x="334" y="81" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#93abab" text-anchor="start" letter-spacing="0" opacity="1">¿A dónde vas?</text>
+  <!-- Panel inferior -->
+  <rect x="292" y="332" width="216" height="140" rx="22" fill="#0b0e0c" stroke="#1f3a3c"/>
+  <rect x="380" y="340" width="40" height="4" rx="2" fill="#3a423b"/>
+  <text x="306" y="364" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#f1f4ee" text-anchor="start" letter-spacing="0" opacity="1">Ruta 7 · Rodadero → Centro</text>
+  <text x="306" y="392" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#00c2c7" text-anchor="start" letter-spacing="0" opacity="1">Llega en 4 min</text>
+  <text x="494" y="392" font-family="Consolas, 'Courier New', monospace" font-size="10" font-weight="400" fill="#93abab" text-anchor="end" letter-spacing="0" opacity="1">Bus 214</text>
+  <rect x="306" y="404" width="188" height="6" rx="3" fill="#17282a"/>
+  <rect x="306" y="404" width="120" height="6" rx="3" fill="#00c2c7"><animate attributeName="width" values="96;150;96" dur="12s" repeatCount="indefinite"/></rect>
+  <circle cx="306" cy="407" r="4" fill="#00c2c7" stroke="#0b0e0c" stroke-width="2"/><circle cx="353" cy="407" r="4" fill="#00c2c7" stroke="#0b0e0c" stroke-width="2"/><circle cx="400" cy="407" r="4" fill="#00c2c7" stroke="#0b0e0c" stroke-width="2"/><circle cx="447" cy="407" r="4" fill="#3a423b" stroke="#0b0e0c" stroke-width="2"/><circle cx="494" cy="407" r="4" fill="#3a423b" stroke="#0b0e0c" stroke-width="2"/>
+  <text x="306" y="432" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="400" fill="#93abab" text-anchor="start" letter-spacing="0" opacity="1">Siguiente: Bus 219 · 12 min</text>
+  <text x="306" y="450" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="400" fill="#93abab" text-anchor="start" letter-spacing="0" opacity="1">Paradero Calle 22 · 3 rutas</text>
+</g>
+<rect x="368" y="47" width="64" height="9" rx="4.5" fill="#050607"/>
+
+  <g filter="url(#shadow)">
+    <rect x="54" y="120" width="204" height="64" rx="14" fill="#0f1d1f" stroke="#1f3a3c"/>
+    <circle cx="80" cy="152" r="7" fill="#00c2c7"><animate attributeName="opacity" values="1;.3;1" dur="1.4s" repeatCount="indefinite"/></circle>
+    <circle cx="80" cy="152" r="13" fill="none" stroke="#00c2c7" stroke-opacity=".5"><animate attributeName="r" values="8;16;8" dur="1.4s" repeatCount="indefinite"/></circle>
+    <text x="104" y="149" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#f1f4ee" text-anchor="start" letter-spacing="0" opacity="1">En tiempo real</text>
+    <text x="104" y="166" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#93abab" text-anchor="start" letter-spacing="0" opacity="1">Ubicación de cada bus</text>
+  </g>
+  <g filter="url(#shadow)">
+  <rect x="552" y="150" width="196" height="64" rx="14" fill="#0f1d1f" stroke="#1f3a3c"/>
+  <rect x="566" y="166" width="32" height="32" rx="9" fill="#00c2c7"/><rect x="573" y="173" width="18" height="15" rx="3" fill="#0a0c0b"/><rect x="576" y="176" width="12" height="5" fill="#00c2c7"/><circle cx="577" cy="190" r="2" fill="#0a0c0b"/><circle cx="587" cy="190" r="2" fill="#0a0c0b"/>
+  <text x="610" y="179" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#f1f4ee" text-anchor="start" letter-spacing="0" opacity="1">Bus 214 · 4 min</text>
+  <text x="610" y="196" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#93abab" text-anchor="start" letter-spacing="0" opacity="1">Va por Calle 18</text>
+</g>
+  <g filter="url(#shadow)">
+  <rect x="70" y="320" width="196" height="64" rx="14" fill="#0f1d1f" stroke="#1f3a3c"/>
+  <rect x="84" y="336" width="32" height="32" rx="9" fill="#00c2c7"/><path d="M100,362 C91,352 91,342 100,342 C109,342 109,352 100,362 Z" fill="#0a0c0b"/><circle cx="100" cy="350" r="3" fill="#00c2c7"/>
+  <text x="128" y="349" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#f1f4ee" text-anchor="start" letter-spacing="0" opacity="1">Rutas y paraderos</text>
+  <text x="128" y="366" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#93abab" text-anchor="start" letter-spacing="0" opacity="1">SETP Santa Marta</text>
+</g>
+</svg>

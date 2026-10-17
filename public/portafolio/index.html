@@ -13,6 +13,24 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Pantalla de carga: ojos en la oscuridad → la pantera emerge → la pantalla se abre como una mandíbula -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__half loader__half--top"></div>
+    <div class="loader__half loader__half--bottom"></div>
+    <span class="loader__seam"></span>
+    <div class="loader__stage">
+      <div class="loader__panther" id="loader-panther">
+        <img src="assets/pantera.png" alt="" width="360" height="360">
+        <i class="loader__eye loader__eye--l"></i>
+        <i class="loader__eye loader__eye--r"></i>
+        <span class="loader__scan"></span>
+        <div class="loader__sparks" id="loader-sparks"></div>
+      </div>
+      <p class="loader__brand"><span id="loader-panther-txt">PANTHER</span><b id="loader-code-txt">CODE</b></p>
+      <div class="loader__bar"><span id="loader-bar"></span></div>
+      <p class="loader__status"><span id="loader-msg">Despertando a la pantera</span><span id="loader-pct">0%</span></p>
+    </div>
+  </div>
 
   <!-- ============ SPRITE SVG ============
        Degradados y filtros compartidos. Los trazos de la pantera se cargan
@@ -70,8 +88,9 @@
       <!-- A) HERO -->
       <div class="hero">
         <div class="hero__copy">
-          <p class="tag reveal">[ Bienvenidos a ]</p>
-          <h1 class="wordmark"><span class="wordmark__a">PANTHER</span><span class="wordmark__b">CODE</span></h1>
+          <p class="welcome reveal">Bienvenidos <em>a</em></p>
+          <!-- PANTHERCODE en 3D: lo construye initWordmark3D (js/wordmark3d.js) -->
+          <div class="w3d-wrap"><h1 class="w3d" id="w3d" aria-label="Panthercode"></h1></div>
           <p class="hero__lema reveal">Diseño digital que deja huella.</p>
           <div class="hero__id reveal">
             <strong>Richard Andrés Díaz Lamadrid</strong>
@@ -84,12 +103,54 @@
           </div>
         </div>
 
+        <!-- Pantera 3D: imagen con profundidad (WebGL) + ojos neón que siguen el cursor (ver PANTERA 3D en main.js) -->
         <div class="hero__emblem" id="emblem-wrap">
-          <div class="emblem-glow" aria-hidden="true"></div>
-          <svg class="emblem" id="emblem" viewBox="0 0 390 375" role="img" aria-label="Emblema de pantera de Panthercode">
-            <use href="#panther-silhouette" fill="url(#chrome)" fill-rule="evenodd"/>
-            <use class="emblem__eye" href="#panther-eye" fill="#b8ff1a" filter="url(#glow)"/>
-          </svg>
+          <div class="pantera" id="pantera" role="img" aria-label="Pantera negra de Panthercode con ojos verde neón">
+            <div class="pantera__aura" aria-hidden="true"></div>
+            <div class="pantera__scene" id="pantera-scene" aria-hidden="true">
+              <canvas class="pantera__layer" id="pantera-gl"></canvas>
+              <img class="pantera__layer pantera__fallback" src="assets/pantera.png" alt="" width="360" height="360">
+              <!-- Ojos: viewBox igual a la imagen (360x360), coordenadas en píxeles de la imagen -->
+              <svg class="pantera__layer" viewBox="0 0 360 360">
+                <defs>
+                  <radialGradient id="pantera-iris" cx=".5" cy=".62" r=".6">
+                    <stop offset="0" stop-color="#f4ffb0"/><stop offset=".45" stop-color="#b8ff1a"/><stop offset="1" stop-color="#3e6000"/>
+                  </radialGradient>
+                  <linearGradient id="pantera-lid-shadow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#000" stop-opacity=".85"/><stop offset=".45" stop-color="#000" stop-opacity=".15"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+                  </linearGradient>
+                  <linearGradient id="pantera-lid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0d12"/><stop offset="1" stop-color="#1b1b22"/></linearGradient>
+                  <filter id="pantera-glow" x="-150%" y="-150%" width="400%" height="400%">
+                    <feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <filter id="pantera-soft"><feGaussianBlur stdDeviation=".6"/></filter>
+                  <path id="pantera-eye-l" d="M165,131 C172,123 188,123 196,139 C190,149 171,150 165,131 Z"/>
+                  <path id="pantera-eye-r" d="M289,143 C294,130 308,124 317,133 C314,147 300,152 289,143 Z"/>
+                  <clipPath id="pantera-clip-l"><use href="#pantera-eye-l"/></clipPath>
+                  <clipPath id="pantera-clip-r"><use href="#pantera-eye-r"/></clipPath>
+                </defs>
+                <g id="pantera-eyes">
+                  <g clip-path="url(#pantera-clip-l)">
+                    <use class="pantera__neon" href="#pantera-eye-l" fill="url(#pantera-iris)"/>
+                    <g class="pantera__gaze"><ellipse class="pantera__pupil" cx="181" cy="140" rx="1.7" ry="7.5" fill="#060508" filter="url(#pantera-soft)"/></g>
+                    <use href="#pantera-eye-l" fill="url(#pantera-lid-shadow)"/>
+                    <ellipse cx="174" cy="132" rx="3.2" ry="1.6" fill="#fff" opacity=".75" filter="url(#pantera-soft)"/>
+                    <rect class="pantera__lid" x="160" y="118" width="42" height="36" fill="url(#pantera-lid)"/>
+                  </g>
+                  <g clip-path="url(#pantera-clip-r)">
+                    <use class="pantera__neon" href="#pantera-eye-r" fill="url(#pantera-iris)"/>
+                    <g class="pantera__gaze"><ellipse class="pantera__pupil" cx="302" cy="140" rx="1.5" ry="7" fill="#060508" filter="url(#pantera-soft)"/></g>
+                    <use href="#pantera-eye-r" fill="url(#pantera-lid-shadow)"/>
+                    <ellipse cx="310" cy="133" rx="2.6" ry="1.4" fill="#fff" opacity=".7" filter="url(#pantera-soft)"/>
+                    <rect class="pantera__lid" x="284" y="120" width="38" height="36" fill="url(#pantera-lid)"/>
+                  </g>
+                  <g id="pantera-bloom" opacity="0" filter="url(#pantera-glow)" fill="#b8ff1a">
+                    <use href="#pantera-eye-l"/><use href="#pantera-eye-r"/>
+                  </g>
+                </g>
+              </svg>
+            </div>
+          </div>
         </div>
 
         <p class="coords tag" aria-label="Coordenadas de Santa Marta">11.2405° N<br>74.2277° W</p>
@@ -232,8 +293,9 @@
         <a class="contact__row reveal" href="https://wa.me/573016407222" data-whatsapp target="_blank" rel="noopener">
           <span class="tag">02</span><span class="contact__label">WhatsApp</span><span class="contact__value" data-whatsapp-label>+57 301 640 7222</span><i aria-hidden="true">→</i>
         </a>
-        <a class="contact__row reveal" href="mailto:richardandreslam@gmail.com">
-          <span class="tag">03</span><span class="contact__label">Enviar mensaje</span><span class="contact__value">Abrir tu correo</span><i aria-hidden="true">→</i>
+        <!-- Abre el correo hacia richardandreslam@gmail.com con asunto y mensaje base (MAIL_MESSAGE en main.js) -->
+        <a class="contact__row reveal" href="mailto:richardandreslam@gmail.com" data-mail-message>
+          <span class="tag">03</span><span class="contact__label">Enviar mensaje</span><span class="contact__value">Déjame un mensaje para colaborar</span><i aria-hidden="true">→</i>
         </a>
         <!-- Redes sociales: copia una fila como esta y cambia el enlace.
         <a class="contact__row reveal" href="https://www.linkedin.com/in/TU-USUARIO" target="_blank" rel="noopener">
@@ -247,6 +309,40 @@
         </a>
         -->
       </div>
+
+      <!-- Formulario de contacto: guarda en Supabase (tabla mensajes); se lee en /admin -->
+      <form class="cform reveal" id="cform" novalidate>
+        <p class="tag">[ O escríbeme aquí ]</p>
+        <h2 class="subtitle">Cuéntame tu <em>idea.</em></h2>
+        <fieldset class="cform__types">
+          <legend class="tag">¿Qué tienes en mente?</legend>
+          <label class="pill"><input type="radio" name="tipo" value="Prácticas" checked><span>Prácticas</span></label>
+          <label class="pill"><input type="radio" name="tipo" value="Proyecto freelance"><span>Proyecto freelance</span></label>
+          <label class="pill"><input type="radio" name="tipo" value="Colaboración"><span>Colaboración</span></label>
+          <label class="pill"><input type="radio" name="tipo" value="Otro"><span>Otro</span></label>
+        </fieldset>
+        <div class="cform__grid">
+          <label class="field"><span class="tag">Nombre</span><input name="nombre" autocomplete="name" required placeholder="¿Cómo te llamas?"></label>
+          <label class="field"><span class="tag">Correo</span><input name="correo" type="email" autocomplete="email" required placeholder="tu@correo.com"></label>
+          <label class="field-trap" aria-hidden="true">Web<input name="web" tabindex="-1" autocomplete="off"></label>
+          <label class="field field--full"><span class="tag">Mensaje</span><textarea name="mensaje" rows="5" required placeholder="Cuéntame sobre tu proyecto, empresa o propuesta"></textarea></label>
+        </div>
+        <div class="cform__actions">
+          <button class="btn btn--main" type="submit"><span>Enviar mensaje</span><i aria-hidden="true">→</i></button>
+          <p class="cform__error" id="cform-error" role="alert"></p>
+        </div>
+        <div class="cform__done" id="cform-done" hidden>
+          <span class="cform__check" aria-hidden="true">✓</span>
+          <h3>¡Mensaje enviado!</h3>
+          <p>Gracias, <b id="cform-name"></b>. Te responderé pronto a <b id="cform-mail"></b>.</p>
+          <button class="link" type="button" id="cform-again">Enviar otro mensaje</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= VISTA: CASO DE ESTUDIO (#proyecto/slug) ================= -->
+    <section class="view page case" data-view="proyecto" aria-labelledby="case-title" hidden>
+      <div id="case"></div>
     </section>
   </main>
 
@@ -311,6 +407,7 @@
     </svg>
   </div>
 
+  <script src="js/wordmark3d.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

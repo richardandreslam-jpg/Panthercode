@@ -3,22 +3,65 @@ import { requireAdmin, type Usuario } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 const fechaCorta = new Intl.DateTimeFormat("es-CO", { dateStyle: "medium" });
+const fechaHora = new Intl.DateTimeFormat("es-CO", { dateStyle: "medium", timeStyle: "short" });
+
+interface Mensaje {
+  id: string;
+  nombre: string;
+  correo: string;
+  tipo: string;
+  mensaje: string;
+  created_at: string;
+}
 
 export default async function AdminPage() {
   const usuario = await requireAdmin();
   const supabase = await createClient();
-  // RLS: un admin ve todas las filas de usuarios.
-  const { data: usuarios } = await supabase
-    .from("usuarios")
-    .select("id, email, nombre, rol, activo, created_at")
-    .order("created_at", { ascending: true })
-    .returns<Usuario[]>();
+  // RLS: un admin ve todas las filas de usuarios y de mensajes.
+  const [{ data: usuarios }, { data: mensajes }] = await Promise.all([
+    supabase
+      .from("usuarios")
+      .select("id, email, nombre, rol, activo, created_at")
+      .order("created_at", { ascending: true })
+      .returns<Usuario[]>(),
+    supabase
+      .from("mensajes")
+      .select("id, nombre, correo, tipo, mensaje, created_at")
+      .order("created_at", { ascending: false })
+      .limit(50)
+      .returns<Mensaje[]>(),
+  ]);
 
   return (
     <div className="space-y-10">
       <section>
         <p className="mb-2 font-sans text-xs uppercase tracking-[0.28em] text-[var(--green)]">Bienvenido</p>
         <h1 className="text-4xl font-semibold tracking-tight">{usuario.nombre ?? usuario.email}</h1>
+      </section>
+
+      <section className="rounded-2xl border border-[var(--line)] bg-white/50 p-6">
+        <h2 className="mb-4 text-2xl font-semibold">Mensajes del portafolio</h2>
+        {(mensajes ?? []).length === 0 ? (
+          <p className="font-sans text-sm text-[var(--muted)]">Todavía no hay mensajes.</p>
+        ) : (
+          <ul className="space-y-4 font-sans text-sm">
+            {(mensajes ?? []).map((m) => (
+              <li key={m.id} className="rounded-xl border border-[var(--line)] bg-white/60 p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <p className="font-semibold">
+                    {m.nombre} ·{" "}
+                    <a className="text-[var(--green)] underline" href={`mailto:${m.correo}`}>
+                      {m.correo}
+                    </a>
+                  </p>
+                  <span className="text-xs text-[var(--muted)]">{fechaHora.format(new Date(m.created_at))}</span>
+                </div>
+                <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[var(--green)]">{m.tipo}</p>
+                <p className="mt-2 whitespace-pre-line">{m.mensaje}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="rounded-2xl border border-[var(--line)] bg-white/50 p-6">
