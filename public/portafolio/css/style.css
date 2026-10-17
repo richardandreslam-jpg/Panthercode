@@ -1232,19 +1232,32 @@ html.is-loading { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { .w3d, .w3d__l { transform: none !important; } }
 
 /* ---------- Caso de estudio ---------- */
-.case__back { display: inline-block; margin-bottom: 34px; }
-.case__lead { max-width: 780px; margin-top: -14px; color: var(--mu); font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
-.case__meta {
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: 40px 0;
-  border-block: 1px solid var(--line);
+.case__back { display: inline-block; margin-bottom: 26px; }
+/* Encabezado en dos columnas: información + imagen, todo visible al entrar */
+.case__intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
 }
-.case__meta div { padding: 18px 20px; }
-.case__meta div:first-child { padding-left: 0; }
-.case__meta div + div { border-left: 1px solid var(--line); }
+.case__intro .title--page { margin-bottom: 18px; font-size: clamp(2.2rem, 4.2vw, 4rem); }
+.case__lead { max-width: 620px; color: var(--mu); font-size: clamp(1rem, 1.3vw, 1.12rem); }
+.case__meta {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 28px 0 0;
+  border-top: 1px solid var(--line);
+}
+.case__meta div { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--line); }
+.case__meta div:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--line); }
 .case__meta dd { margin: 6px 0 0; font-weight: 600; }
-.case__hero { margin: 0; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
-.case__hero img { width: 100%; }
+.case__hero {
+  margin: 0;
+  border: 1px solid var(--line); border-radius: var(--r);
+  overflow: hidden;
+  background: var(--bg2);
+}
+/* La imagen se ve completa y nunca más alta que la pantalla */
+.case__hero img { display: block; width: 100%; max-height: min(58vh, 460px); object-fit: contain; }
 .case__block { margin-top: 90px; }
 .case__block p { max-width: 660px; color: var(--mu); font-size: 17px; }
 .case__block .subtitle { margin-top: 12px; }
@@ -1342,8 +1355,10 @@ html.is-loading { overflow: hidden; }
 .cform__done p { color: var(--mu); }
 
 @media (max-width: 900px) {
-  .case__meta { grid-template-columns: 1fr 1fr; }
-  .case__meta div:nth-child(3) { border-left: 0; padding-left: 0; }
+  /* En tablet y celular: primero la información, luego la imagen más pequeña */
+  .case__intro { grid-template-columns: 1fr; gap: 28px; }
+  .case__hero { width: 100%; max-width: 520px; justify-self: center; }
+  .case__hero img { max-height: 300px; }
   .case__block--split { grid-template-columns: 1fr; }
   .case__steps { grid-template-columns: 1fr 1fr; }
 }

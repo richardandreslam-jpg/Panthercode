@@ -618,11 +618,16 @@ const renderCase = (slug) => {
 
   $("#case").innerHTML = `
     <a class="case__back link" href="#proyectos">← Todos los proyectos</a>
-    <p class="tag reveal">[ Caso de estudio · ${escapeHtml(p.c)} ]</p>
-    <h1 class="title title--page reveal" id="case-title">${escapeHtml(p.t)}</h1>
-    <p class="case__lead reveal">${escapeHtml(p.d)}</p>
-    <dl class="case__meta reveal">${meta.map(([k, v]) => `<div><dt class="tag">${k}</dt><dd>${escapeHtml(v)}</dd></div>`).join("")}</dl>
-    <figure class="case__hero reveal"${p.fx ? ` data-fx="${escapeHtml(p.fx)}"` : ""}><img src="${escapeHtml(p.img)}" alt="Vista de la app ${escapeHtml(p.t)}"></figure>
+    <!-- Información a la izquierda e imagen a la derecha: todo visible al entrar (sin efectos de hover) -->
+    <div class="case__intro">
+      <div class="case__info">
+        <p class="tag reveal">[ Caso de estudio · ${escapeHtml(p.c)} ]</p>
+        <h1 class="title title--page reveal" id="case-title">${escapeHtml(p.t)}</h1>
+        <p class="case__lead reveal">${escapeHtml(p.d)}</p>
+        <dl class="case__meta reveal">${meta.map(([k, v]) => `<div><dt class="tag">${k}</dt><dd>${escapeHtml(v)}</dd></div>`).join("")}</dl>
+      </div>
+      <figure class="case__hero reveal"><img src="${escapeHtml(p.img)}" alt="Vista de la app ${escapeHtml(p.t)}"></figure>
+    </div>
 
     <section class="case__block case__block--split">
       <div class="reveal"><p class="tag">[ 01 ]</p><h2 class="subtitle">El reto</h2><p>${escapeHtml(c.reto)}</p></div>
