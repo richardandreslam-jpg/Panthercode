@@ -1995,11 +1995,14 @@ const initProjectFx = () => {
   };
 
 
-  /* Delegación: sirve para las tarjetas de la cuadrícula, el carrusel y el tablero */
+  /* Delegación: sirve para las tarjetas de la cuadrícula, el carrusel y el tablero.
+     Nunca en la página de detalle de un proyecto (ahí se lee la información). */
+  const fxAllowed = (el) => currentView !== "proyecto" && !el.closest(".case");
   let hovered = null;
   document.addEventListener("pointerover", (e) => {
     if (e.pointerType !== "mouse") return;
     const card = e.target.closest?.("[data-fx]");
+    if (card && !fxAllowed(card)) return;
     if (!card || card === hovered) return;
     if (hovered) deactivate(hovered.dataset.fx);
     hovered = card;
@@ -2016,7 +2019,7 @@ const initProjectFx = () => {
   document.addEventListener("pointerdown", (e) => {
     if (e.pointerType === "mouse") return;
     const card = e.target.closest?.("[data-fx]");
-    if (!card) return;
+    if (!card || !fxAllowed(card)) return;
     activate(card.dataset.fx, card);
     clearTimeout(touchTimer);
     touchTimer = setTimeout(() => deactivate(card.dataset.fx), 2600);

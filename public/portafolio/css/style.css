@@ -1236,7 +1236,7 @@ html.is-loading { overflow: hidden; }
 /* Encabezado en dos columnas: información + imagen, todo visible al entrar */
 .case__intro {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr);
   gap: clamp(28px, 4vw, 64px);
   align-items: center;
 }
@@ -1257,7 +1257,8 @@ html.is-loading { overflow: hidden; }
   background: var(--bg2);
 }
 /* La imagen se ve completa y nunca más alta que la pantalla */
-.case__hero img { display: block; width: 100%; max-height: min(58vh, 460px); object-fit: contain; }
+.case__hero { max-width: 440px; justify-self: end; }
+.case__hero img { display: block; width: 100%; max-height: min(40vh, 300px); object-fit: contain; }
 .case__block { margin-top: 90px; }
 .case__block p { max-width: 660px; color: var(--mu); font-size: 17px; }
 .case__block .subtitle { margin-top: 12px; }
@@ -1357,8 +1358,8 @@ html.is-loading { overflow: hidden; }
 @media (max-width: 900px) {
   /* En tablet y celular: primero la información, luego la imagen más pequeña */
   .case__intro { grid-template-columns: 1fr; gap: 28px; }
-  .case__hero { width: 100%; max-width: 520px; justify-self: center; }
-  .case__hero img { max-height: 300px; }
+  .case__hero { width: 100%; max-width: 380px; justify-self: center; }
+  .case__hero img { max-height: 220px; }
   .case__block--split { grid-template-columns: 1fr; }
   .case__steps { grid-template-columns: 1fr 1fr; }
 }
