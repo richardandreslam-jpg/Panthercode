@@ -1590,7 +1590,7 @@ const initProjectFx = () => {
   const NS = "http://www.w3.org/2000/svg";
   const AC = "#b8ff1a";
 
-  /* ---------- Capas sobre toda la pantalla (no bloquean clics) ---------- */
+  /* ---------- Capas del efecto: se ajustan al cuadro del proyecto (no bloquean clics) ---------- */
   const canvas = document.createElement("canvas");
   canvas.className = "fx-overlay";
   document.body.appendChild(canvas);
@@ -1601,19 +1601,38 @@ const initProjectFx = () => {
   document.body.appendChild(routesSvg);
 
   let W = 0, H = 0, dpr = 1;
-  const resize = () => {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    routesSvg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  let target = null;   // tarjeta sobre la que se dibuja el efecto
+
+  /* Coloca las capas exactamente sobre la tarjeta (recortada al área visible del tablero o el carrusel) */
+  const fitToCard = () => {
+    if (!target) return;
+    const r = target.getBoundingClientRect();
+    const box = target.closest(".board, .carousel")?.getBoundingClientRect();
+    const left = box ? Math.max(r.left, box.left) : r.left;
+    const top = box ? Math.max(r.top, box.top) : r.top;
+    const right = box ? Math.min(r.right, box.right) : r.right;
+    const bottom = box ? Math.min(r.bottom, box.bottom) : r.bottom;
+    const w = Math.max(1, Math.round(right - left));
+    const h = Math.max(1, Math.round(bottom - top));
+    for (const el of [canvas, routesSvg]) {
+      el.style.left = `${left}px`;
+      el.style.top = `${top}px`;
+      el.style.width = `${w}px`;
+      el.style.height = `${h}px`;
+    }
+    const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (w !== W || h !== H || nextDpr !== dpr) {
+      W = w; H = h; dpr = nextDpr;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      routesSvg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    }
   };
-  resize();
-  window.addEventListener("resize", resize);
+  window.addEventListener("resize", fitToCard);
 
   const rand = (a, b) => a + Math.random() * (b - a);
+  // source: área del efecto en coordenadas de la propia capa (0,0 = esquina de la tarjeta)
   const state = { active: null, source: null, wave: 0, letters: [], balls: [], spawnAcc: 0 };
 
   /* =========================================================
@@ -1630,8 +1649,8 @@ const initProjectFx = () => {
   const spawnLetter = (rect) => {
     const ch = TEXT[textIndex++ % TEXT.length];
     state.letters.push({
-      ch, x: rand(rect.left + 20, rect.right - 20), y: rand(rect.top + rect.height * 0.25, rect.top + rect.height * 0.55),
-      vx: rand(-90, 90), vy: rand(-170, -80), life: 0, max: rand(2.2, 3.2), size: rand(16, 34), wob: rand(0, 6.28),
+      ch, x: rand(rect.left + 20, rect.right - 20), y: rand(rect.top + rect.height * 0.45, rect.top + rect.height * 0.85),
+      vx: rand(-40, 40), vy: rand(-110, -50), life: 0, max: rand(2.2, 3.2), size: rand(14, 26), wob: rand(0, 6.28),
     });
   };
 
@@ -1700,7 +1719,7 @@ const initProjectFx = () => {
         const y = y0 + env * state.wave * (
           Math.sin(x * 0.018 + t * 6 + layer) * 26 +
           Math.sin(x * 0.047 - t * 9) * 14 +
-          Math.sin(x * 0.006 + t * 2) * 18) * (1 - layer * 0.25);
+          Math.sin(x * 0.006 + t * 2) * 18) * (1 - layer * 0.25) * 0.6;   // más baja: cabe en el cuadro
         if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -1714,7 +1733,7 @@ const initProjectFx = () => {
   // Colores de la app Baseball Nation: blanco, azul, rojo y dorado
   const BALL_GLOWS = ["rgba(31,75,184,.75)", "rgba(212,42,42,.7)", "rgba(230,180,40,.8)"];
   const spawnBall = () => {
-    const r = rand(14, 40);                 // tamaño = profundidad (las pequeñas parecen lejanas)
+    const r = rand(8, 20) * Math.min(1.3, Math.max(0.7, Math.min(W, H) / 380));   // tamaño = profundidad; proporcional al cuadro
     state.balls.push({
       glow: BALL_GLOWS[Math.floor(Math.random() * BALL_GLOWS.length)],
       gold: Math.random() < 0.18,           // algunas pelotas doradas, como trofeo
@@ -1850,7 +1869,7 @@ const initProjectFx = () => {
     clearTimeout(routesTimer);
     routesSvg.querySelectorAll(".fx-route").forEach((g) => g.remove());
     routes = [];
-    const n = W < 700 ? 4 : 6;
+    const n = W < 420 ? 3 : 4;
     for (let i = 0; i < n; i++) {
       const color = ROUTE_COLORS[i % ROUTE_COLORS.length];
       const g = document.createElementNS(NS, "g");
@@ -1887,7 +1906,9 @@ const initProjectFx = () => {
         stops.push(c);
       }
       // Etiqueta de la ruta
-      const start = line.getPointAtLength(Math.min(90, len * 0.1));
+      const pt0 = line.getPointAtLength(Math.min(90, len * 0.1));
+      // La etiqueta nunca se sale del cuadro del proyecto
+      const start = { x: Math.max(40, Math.min(W - 40, pt0.x)), y: Math.max(40, Math.min(H - 8, pt0.y)) };
       const label = document.createElementNS(NS, "g");
       label.innerHTML = `<rect x="${start.x - 34}" y="${start.y - 34}" width="68" height="22" rx="11" fill="#0a0c0b" stroke="${color}"/>
         <text x="${start.x}" y="${start.y - 19}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="500" fill="${color}">RUTA ${[7, 12, 3, 21, 9, 15][i]}</text>`;
@@ -1948,14 +1969,15 @@ const initProjectFx = () => {
     const t = now / 1000;
     const dt = Math.min(0.05, (now - (last || now)) / 1000);
     last = now;
+    fitToCard();   // sigue a la tarjeta si la página se desplaza
     ctx.clearRect(0, 0, W, H);
 
     if (state.active === "vta" && state.source) {
-      state.spawnAcc += dt * 22;
+      state.spawnAcc += dt * 11;
       while (state.spawnAcc > 1) { spawnLetter(state.source); state.spawnAcc--; }
     }
-    if (state.active === "baseball" && state.balls.length < 45) {
-      state.spawnAcc += dt * 7;
+    if (state.active === "baseball" && state.balls.length < 16) {
+      state.spawnAcc += dt * 4;
       while (state.spawnAcc > 1) { spawnBall(); state.spawnAcc--; }
     }
 
@@ -1982,9 +2004,13 @@ const initProjectFx = () => {
   const activate = (type, el) => {
     if (reducedMotion.matches) return;
     if (state.active === "setp" && type !== "setp") hideRoutes();
+    // Al cambiar de tarjeta se limpian los restos del efecto anterior
+    if (target !== el) { state.letters = []; state.balls = []; state.wave = 0; }
+    target = el;
+    fitToCard();
     state.active = type;
-    state.source = el.getBoundingClientRect();
-    state.spawnAcc = type === "baseball" ? 3 : 0;   // las primeras pelotas salen al instante
+    state.source = { left: 0, top: 0, right: W, bottom: H, width: W, height: H };
+    state.spawnAcc = type === "baseball" ? 2 : 0;   // las primeras pelotas salen al instante
     if (type === "setp") showRoutes();
     wake();
   };
@@ -2223,7 +2249,8 @@ const init = () => {
   initScramble();
   initProjectFx();
   // PANTHERCODE 3D hace su entrada cuando termina la pantalla de carga
-  const loaderDone = initLoader();
+  // Intro "La pantera de luz" (solo la primera vez por visita); si falta intro.js, la carga clásica
+  const loaderDone = window.initIntro ? initIntro() : initLoader();
   if (window.initWordmark3D) initWordmark3D($("#w3d"), undefined, { ready: loaderDone });
   initContactForm();
 

@@ -10,26 +10,29 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=202610162006">
+  <link rel="stylesheet" href="css/style.css?v=20261016210525">
+  <link rel="stylesheet" href="css/intro.css?v=20261016210525">
 </head>
 <body>
-  <!-- Pantalla de carga: ojos en la oscuridad → la pantera emerge → la pantalla se abre como una mandíbula -->
-  <div class="loader" id="loader" aria-hidden="true">
-    <div class="loader__half loader__half--top"></div>
-    <div class="loader__half loader__half--bottom"></div>
-    <span class="loader__seam"></span>
-    <div class="loader__stage">
-      <div class="loader__panther" id="loader-panther">
-        <img src="assets/pantera.png" alt="" width="360" height="360">
-        <i class="loader__eye loader__eye--l"></i>
-        <i class="loader__eye loader__eye--r"></i>
-        <span class="loader__scan"></span>
-        <div class="loader__sparks" id="loader-sparks"></div>
-      </div>
-      <p class="loader__brand"><span id="loader-panther-txt">PANTHER</span><b id="loader-code-txt">CODE</b></p>
-      <div class="loader__bar"><span id="loader-bar"></span></div>
-      <p class="loader__status"><span id="loader-msg">Despertando a la pantera</span><span id="loader-pct">0%</span></p>
+  <!-- Intro "La pantera de luz": partículas que forman la pantera; se juega con el cursor y al entrar viaja a su lugar en el hero (js/intro.js) -->
+  <div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Bienvenida a Panthercode">
+    <canvas class="intro__canvas" aria-hidden="true"></canvas>
+    <div class="intro__vignette" aria-hidden="true"></div>
+    <div class="intro__hud intro__hud--tl" aria-hidden="true"><span>PANTHERCODE / SYS</span><span>Santa Marta · 11.24°N</span></div>
+    <div class="intro__hud intro__hud--tr" aria-hidden="true"><span class="intro__count">000</span><span>Ensamblando pantera</span></div>
+    <div class="intro__ui">
+      <p class="intro__brand" aria-label="Panthercode"><span></span><b></b></p>
+      <button class="intro__enter" type="button" disabled>
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="intro__ring-bg" cx="60" cy="60" r="56" pathLength="1"/>
+          <circle class="intro__ring-fg" cx="60" cy="60" r="56" pathLength="1"/>
+        </svg>
+        <span>Entrar</span>
+      </button>
+      <p class="intro__hint">Despertando a la pantera…</p>
     </div>
+    <button class="intro__skip" type="button">Saltar intro</button>
+    <div class="intro__flash" aria-hidden="true"></div>
   </div>
 
   <!-- ============ SPRITE SVG ============
@@ -407,7 +410,8 @@
     </svg>
   </div>
 
-  <script src="js/wordmark3d.js?v=202610162006"></script>
-  <script src="js/main.js?v=202610162006"></script>
+  <script src="js/intro.js?v=20261016210525"></script>
+  <script src="js/wordmark3d.js?v=20261016210525"></script>
+  <script src="js/main.js?v=20261016210525"></script>
 </body>
 </html>

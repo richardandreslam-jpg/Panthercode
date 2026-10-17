@@ -1,0 +1,102 @@
+/* =========================================================
+   INTRO "LA PANTERA DE LUZ"
+   ========================================================= */
+html.is-intro { overflow: hidden; }
+.intro { position: fixed; inset: 0; z-index: 9500; }
+/* El fondo va en su propia capa para poder desvanecerlo y dejar ver el sitio detrás */
+.intro::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, #0b120a 0%, #050607 60%);
+  transition: opacity .9s ease .1s;
+}
+.intro__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.intro__vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.65) 100%); }
+
+/* HUD técnico en las esquinas */
+.intro__hud {
+  position: absolute; top: 28px;
+  display: grid; gap: 6px;
+  font: 500 11px var(--f-mono); letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(152,160,149,.8);
+  opacity: 0; animation: introFade .8s .2s forwards;
+}
+.intro__hud--tl { left: 32px; }
+.intro__hud--tr { right: 32px; text-align: right; }
+.intro__count { font: 400 2.4rem/1 var(--f-title); letter-spacing: .02em; color: var(--ac); text-shadow: 0 0 18px rgba(184,255,26,.5); }
+@keyframes introFade { to { opacity: 1; } }
+
+/* Marca, botón y ayuda */
+.intro__ui {
+  position: absolute; left: 0; right: 0; bottom: clamp(28px, 7vh, 70px);
+  display: grid; justify-items: center; gap: 16px;
+  text-align: center;
+}
+.intro__brand { min-height: 1em; font: 400 clamp(1.6rem, 4vw, 2.6rem)/1 var(--f-title); letter-spacing: .14em; }
+.intro__brand b { font-weight: 400; color: var(--ac); text-shadow: 0 0 22px rgba(184,255,26,.6); }
+.intro__enter {
+  position: relative;
+  width: 104px; height: 104px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  font: 500 12px var(--f-mono); letter-spacing: .26em; text-transform: uppercase;
+  color: var(--mu);
+  opacity: 0; transform: scale(.8);
+  transition: opacity .6s, transform .6s cubic-bezier(.3,1.5,.5,1), color .3s, background .3s, box-shadow .3s;
+}
+.intro.is-ready .intro__enter { opacity: 1; transform: scale(1); }
+.intro__enter svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.intro__ring-bg { fill: none; stroke: rgba(184,255,26,.15); stroke-width: 1.5; }
+.intro__ring-fg { fill: none; stroke: var(--ac); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1; filter: drop-shadow(0 0 6px var(--ac)); }
+.intro.is-enter-ready .intro__enter { color: var(--ac); animation: introPulse 2s ease-in-out infinite; cursor: pointer; }
+.intro.is-enter-ready .intro__enter:hover { background: var(--ac); color: #050607; box-shadow: 0 0 50px rgba(184,255,26,.55); }
+@keyframes introPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(184,255,26,.35); } 50% { box-shadow: 0 0 0 16px rgba(184,255,26,0); } }
+.intro__hint { font: 500 11px var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--mu); }
+.intro__skip {
+  position: absolute; right: 32px; bottom: 28px;
+  font: 500 11px var(--f-mono); letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(152,160,149,.7);
+  border-bottom: 1px solid rgba(152,160,149,.3);
+  transition: color .25s, border-color .25s;
+}
+.intro__skip:hover { color: var(--ac); border-color: var(--ac); }
+
+/* ---------- Transición a la página de bienvenida ----------
+   La interfaz se va, el fondo se desvanece y la pantera de luz viaja a su lugar en el hero */
+.intro__flash { display: none; }
+.intro.is-travel { pointer-events: none; }
+.intro.is-travel::before, .intro.is-travel .intro__vignette { opacity: 0; transition: opacity .9s ease .1s; }
+.intro.is-travel .intro__ui, .intro.is-travel .intro__hud, .intro.is-travel .intro__skip { opacity: 0; transform: translateY(14px); transition: opacity .35s, transform .5s; }
+
+/* La pantera real del hero espera a que aterricen las partículas y se materializa */
+.pantera { transition: opacity .9s ease, filter 1.2s ease; }
+html.pantera-wait .pantera { opacity: 0; filter: brightness(2.2) blur(6px); }
+
+/* Mientras dura la intro, el resto del hero está oculto… */
+html.is-intro .announce, html.is-intro .progress, html.is-intro .header,
+html.is-intro .hero__copy > *, html.is-intro .coords, html.is-intro .hero__bottom { opacity: 0; }
+html.is-intro .announce, html.is-intro .header { transform: translateY(-24px); }
+html.is-intro .hero__copy > *, html.is-intro .hero__bottom { transform: translateY(28px); }
+/* …y aparece en cascada al entrar */
+html.intro-cascade .announce, html.intro-cascade .progress, html.intro-cascade .header,
+html.intro-cascade .hero__copy > *, html.intro-cascade .coords, html.intro-cascade .hero__bottom {
+  transition: opacity .8s ease, transform .9s cubic-bezier(.2, .75, .25, 1);
+}
+html.intro-cascade .announce { transition-delay: .15s; }
+html.intro-cascade .header { transition-delay: .3s; }
+html.intro-cascade .hero__copy > :nth-child(1) { transition-delay: .4s; }
+html.intro-cascade .hero__copy > :nth-child(2) { transition-delay: .5s; }
+html.intro-cascade .hero__copy > :nth-child(3) { transition-delay: .9s; }
+html.intro-cascade .hero__copy > :nth-child(4) { transition-delay: 1s; }
+html.intro-cascade .hero__copy > :nth-child(5) { transition-delay: 1.1s; }
+html.intro-cascade .hero__copy > :nth-child(6) { transition-delay: 1.2s; }
+html.intro-cascade .coords { transition-delay: 1.3s; }
+html.intro-cascade .hero__bottom { transition-delay: 1.4s; }
+
+@media (max-width: 640px) {
+  .intro__hud { top: 18px; font-size: 9px; }
+  .intro__hud--tl { left: 18px; } .intro__hud--tr { right: 18px; }
+  .intro__count { font-size: 1.8rem; }
+  .intro__skip { right: 50%; transform: translateX(50%); bottom: 14px; }
+  .intro__ui { bottom: 46px; }
+  .intro__enter { width: 88px; height: 88px; }
+}

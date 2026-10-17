@@ -995,10 +995,13 @@ html.has-cursor .cursor { display: block; }
 }
 
 /* ---------- Efectos de proyectos (al pasar el cursor) ---------- */
-/* Encima del contenido, debajo de la cortina (9000) y del cursor (9999); no bloquean clics */
+/* Solo dentro del cuadro del proyecto: JS les da la posición y el tamaño de la tarjeta.
+   Encima de la tarjeta, debajo de la cortina (9000) y del cursor (9999); no bloquean clics */
 .fx-overlay, .fx-routes {
-  position: fixed; inset: 0;
-  width: 100%; height: 100%;
+  position: fixed; left: 0; top: 0;
+  width: 0; height: 0;
+  border-radius: var(--r);
+  overflow: hidden;
   pointer-events: none;
   z-index: 8000;
 }
@@ -1236,7 +1239,7 @@ html.is-loading { overflow: hidden; }
 /* Encabezado en dos columnas: información + imagen, todo visible al entrar */
 .case__intro {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: clamp(28px, 4vw, 64px);
   align-items: center;
 }
@@ -1257,8 +1260,8 @@ html.is-loading { overflow: hidden; }
   background: var(--bg2);
 }
 /* La imagen se ve completa y nunca más alta que la pantalla */
-.case__hero { max-width: 440px; justify-self: end; }
-.case__hero img { display: block; width: 100%; max-height: min(40vh, 300px); object-fit: contain; }
+.case__hero { width: 100%; max-width: 600px; justify-self: end; }
+.case__hero img { display: block; width: 100%; max-height: min(62vh, 460px); object-fit: contain; }
 .case__block { margin-top: 90px; }
 .case__block p { max-width: 660px; color: var(--mu); font-size: 17px; }
 .case__block .subtitle { margin-top: 12px; }
@@ -1358,8 +1361,8 @@ html.is-loading { overflow: hidden; }
 @media (max-width: 900px) {
   /* En tablet y celular: primero la información, luego la imagen más pequeña */
   .case__intro { grid-template-columns: 1fr; gap: 28px; }
-  .case__hero { width: 100%; max-width: 380px; justify-self: center; }
-  .case__hero img { max-height: 220px; }
+  .case__hero { width: 100%; max-width: 560px; justify-self: center; }
+  .case__hero img { max-height: 340px; }
   .case__block--split { grid-template-columns: 1fr; }
   .case__steps { grid-template-columns: 1fr 1fr; }
 }
