@@ -4,9 +4,13 @@ out
 coverage
 .env
 .env.local
+.credenciales
 .DS_Store
 data/_backups/*
 !data/_backups/.gitkeep
 .vercel
 .env*
 !.env.example
+
+# Datos locales para pruebas con Playwright (nunca se suben)
+.credenciales

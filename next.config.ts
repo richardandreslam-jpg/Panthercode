@@ -2,11 +2,19 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // La raíz del sitio abre el portafolio (HTML estático en public/portafolio)
+  // La raíz "/" muestra el portafolio (public/index.html) sin cambiar la dirección.
+  // /admin y /api siguen siendo rutas de la app Next.js.
+  async rewrites() {
+    return {
+      beforeFiles: [{ source: "/", destination: "/index.html" }],
+    };
+  },
+  // Enlaces antiguos a /portafolio/... llevan a la raíz
   async redirects() {
     return [
-      { source: "/", destination: "/portafolio/index.html", permanent: false },
-      { source: "/portafolio", destination: "/portafolio/index.html", permanent: false },
+      { source: "/portafolio", destination: "/", permanent: true },
+      { source: "/portafolio/index.html", destination: "/", permanent: true },
+      { source: "/portafolio/:path*", destination: "/:path*", permanent: true },
     ];
   },
 };

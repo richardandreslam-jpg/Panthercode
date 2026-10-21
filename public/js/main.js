@@ -2249,8 +2249,8 @@ const init = () => {
   initScramble();
   initProjectFx();
   // PANTHERCODE 3D hace su entrada cuando termina la pantalla de carga
-  // Intro "La pantera de luz" (solo la primera vez por visita); si falta intro.js, la carga clásica
-  const loaderDone = window.initIntro ? initIntro() : initLoader();
+  // Intro "La pantera de luz": página de bienvenida en cada visita y recarga; si falta intro.js, la carga clásica
+  const loaderDone = window.initIntro ? initIntro({ always: true }) : initLoader();
   if (window.initWordmark3D) initWordmark3D($("#w3d"), undefined, { ready: loaderDone });
   initContactForm();
 
