@@ -1,5 +1,7 @@
+import { AnimationsForm } from "@/components/admin/AnimationsForm";
 import { PasswordForm } from "@/components/admin/PasswordForm";
 import { requireAdmin, type Usuario } from "@/lib/auth";
+import { getPortfolioConfig } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 
 const fechaCorta = new Intl.DateTimeFormat("es-CO", { dateStyle: "medium" });
@@ -18,7 +20,7 @@ export default async function AdminPage() {
   const usuario = await requireAdmin();
   const supabase = await createClient();
   // RLS: un admin ve todas las filas de usuarios y de mensajes.
-  const [{ data: usuarios }, { data: mensajes }] = await Promise.all([
+  const [{ data: usuarios }, { data: mensajes }, config] = await Promise.all([
     supabase
       .from("usuarios")
       .select("id, email, nombre, rol, activo, created_at")
@@ -30,6 +32,7 @@ export default async function AdminPage() {
       .order("created_at", { ascending: false })
       .limit(50)
       .returns<Mensaje[]>(),
+    getPortfolioConfig(),
   ]);
 
   return (
@@ -37,6 +40,14 @@ export default async function AdminPage() {
       <section>
         <p className="mb-2 font-sans text-xs uppercase tracking-[0.28em] text-[var(--green)]">Bienvenido</p>
         <h1 className="text-4xl font-semibold tracking-tight">{usuario.nombre ?? usuario.email}</h1>
+      </section>
+
+      <section className="rounded-2xl border border-[var(--line)] bg-white/50 p-6">
+        <h2 className="mb-1 text-2xl font-semibold">Animaciones del portafolio</h2>
+        <p className="mb-5 font-sans text-sm text-[var(--muted)]">
+          Algunos equipos tienen activada la opción “reducir animaciones”. Aquí decides si el portafolio la respeta.
+        </p>
+        <AnimationsForm respetar={config.respetarReducirAnimaciones} />
       </section>
 
       <section className="rounded-2xl border border-[var(--line)] bg-white/50 p-6">

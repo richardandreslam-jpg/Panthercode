@@ -222,7 +222,9 @@ const ANNOUNCE = [
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+// Respeta "reducir animaciones" del sistema solo si PC_REDUCE_MOTION = true (index.html)
+const reducedMotion = window.PC_REDUCE_MOTION ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
+if (reducedMotion.matches) document.documentElement.classList.add("reduce-motion");
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 
 const escapeHtml = (text) =>

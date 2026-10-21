@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { esAdmin, requireAdmin, type Usuario } from "@/lib/auth";
@@ -65,4 +66,23 @@ export async function cambiarPassword(_prev: FormState, formData: FormData): Pro
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return { error: "No se pudo cambiar la contraseña." };
   return { ok: "Contraseña actualizada." };
+}
+
+/* Configuración del portafolio: interruptor de animaciones */
+export async function guardarAnimaciones(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const respetar = formData.get("respetar") === "on";
+  const supabase = await createClient();
+  // RLS: solo un admin puede insertar o actualizar la configuración
+  const { error } = await supabase
+    .from("configuracion")
+    .upsert({ clave: "respetar_reducir_animaciones", valor: respetar }, { onConflict: "clave" });
+  if (error) return { error: "No se pudo guardar la configuración." };
+  revalidateTag("configuracion");
+  revalidatePath("/");
+  return {
+    ok: respetar
+      ? "Guardado: se respetará “reducir animaciones” de cada visitante."
+      : "Guardado: el portafolio mostrará siempre la intro, los efectos y el 3D.",
+  };
 }

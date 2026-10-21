@@ -9,7 +9,8 @@
    - Cada pocos segundos un destello de luz recorre el frente de las letras.
    ========================================================= */
 (() => {
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  // Respeta "reducir animaciones" del sistema solo si PC_REDUCE_MOTION = true (index.html)
+  const reduced = window.PC_REDUCE_MOTION ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
   const LAYERS = 12;   // grosor de cada letra
 
   // Color del canto según la variante (t: 0 = junto al frente, 1 = fondo)

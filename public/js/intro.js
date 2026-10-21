@@ -8,7 +8,8 @@
    Devuelve una promesa que se cumple al revelarse el sitio.
    ========================================================= */
 (() => {
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  // Respeta "reducir animaciones" del sistema solo si PC_REDUCE_MOTION = true (index.html)
+  const reduced = window.PC_REDUCE_MOTION ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
 
   window.initIntro = ({ image = "assets/pantera.png", always = false } = {}) => new Promise((resolve) => {
     const root = document.getElementById("intro");

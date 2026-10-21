@@ -1086,19 +1086,19 @@ html.has-cursor .cursor { display: block; }
   .board { height: 420px; }
 }
 
-/* ---------- 14. Movimiento reducido ---------- */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-    scroll-behavior: auto !important;
-  }
-  .marquee__track { animation: none; }
-  .reveal { opacity: 1; transform: none; }
-  .wordmark { clip-path: none; animation: none; }
-  .bg-dots, .curtain { display: none; }
+/* ---------- 14. Movimiento reducido ----------
+   Solo se activa si PC_REDUCE_MOTION = true en index.html Y el equipo pide reducir animaciones
+   (JS añade la clase html.reduce-motion). Por defecto el portafolio muestra siempre sus animaciones. */
+html.reduce-motion *, html.reduce-motion *::before, html.reduce-motion *::after {
+  animation-duration: .01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .01ms !important;
+  scroll-behavior: auto !important;
 }
+html.reduce-motion .marquee__track { animation: none; }
+html.reduce-motion .reveal { opacity: 1; transform: none; }
+html.reduce-motion .wordmark { clip-path: none; animation: none; }
+html.reduce-motion .bg-dots, html.reduce-motion .curtain { display: none; }
 
 /* =========================================================
    PANTALLA DE CARGA, BIENVENIDA, PANTHERCODE 3D, CASO DE ESTUDIO Y FORMULARIO
@@ -1235,7 +1235,7 @@ html.is-loading { overflow: hidden; }
 .w3d__seg--neon .w3d__back { color: #b8ff1a; text-shadow: 0 0 18px rgba(184,255,26,.95), 0 0 46px rgba(184,255,26,.55); }
 @media (max-width: 900px) { .w3d { font-size: 8.6vw; } }
 @media (max-width: 640px) { .w3d { display: flex; flex-direction: column; white-space: normal; font-size: 16.5vw; line-height: .88; } }
-@media (prefers-reduced-motion: reduce) { .w3d, .w3d__l { transform: none !important; } }
+html.reduce-motion .w3d, html.reduce-motion .w3d__l { transform: none !important; }
 
 /* ---------- Caso de estudio ---------- */
 .case__back { display: inline-block; margin-bottom: 26px; }
