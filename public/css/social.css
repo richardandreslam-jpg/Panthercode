@@ -1,0 +1,73 @@
+/* =========================================================
+   ME GUSTA Y COMENTARIOS DE PROYECTOS
+   ========================================================= */
+
+/* Contador en las tarjetas */
+.card__meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.card__likes {
+  display: inline-flex; align-items: center; gap: 5px;
+  font: 500 12px var(--f-mono);
+  color: var(--mu);
+}
+.card__likes i { font-style: normal; color: #ff5d73; }
+
+/* Botón "Me gusta" en el detalle */
+.like { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; margin-top: 26px; }
+.like__btn {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 12px 20px 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg2);
+  font: 500 12px var(--f-mono); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--tx);
+  transition: border-color .25s, box-shadow .25s, background .25s;
+}
+.like__btn:hover { border-color: #ff5d73; box-shadow: 0 0 22px rgba(255, 93, 115, .25); }
+.like__heart { font-size: 20px; line-height: 1; color: var(--mu); transition: color .25s, transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+.like__count { min-width: 1.4em; padding-left: 10px; border-left: 1px solid var(--line); color: var(--ac); font-weight: 500; }
+.like__btn.is-liked { border-color: #ff5d73; background: rgba(255, 93, 115, .08); }
+.like__btn.is-liked .like__heart { color: #ff5d73; text-shadow: 0 0 14px rgba(255, 93, 115, .7); }
+.like__btn.is-pop .like__heart { animation: likePop .55s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes likePop { 0% { transform: scale(1); } 35% { transform: scale(1.6); } 100% { transform: scale(1); } }
+.like__btn.is-pop::after {
+  content: ""; position: absolute; left: 26px; top: 50%;
+  width: 10px; height: 10px; margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  border: 2px solid #ff5d73;
+  animation: likeRing .6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes likeRing { from { transform: scale(.5); opacity: 1; } to { transform: scale(5); opacity: 0; } }
+.like__hint { font-size: 14px; color: var(--mu); }
+
+/* Comentarios */
+.comments__list { display: grid; gap: 14px; margin: 24px 0 34px; max-width: 820px; }
+.comments__empty { color: var(--mu); font-size: 15px; }
+.comment {
+  display: grid; grid-template-columns: 42px 1fr; gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--bg2);
+}
+.comment__avatar {
+  display: grid; place-items: center;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: rgba(184, 255, 26, .12);
+  border: 1px solid rgba(184, 255, 26, .4);
+  font: 400 1.1rem var(--f-title); color: var(--ac);
+}
+.comment__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.comment__head b { font-weight: 600; }
+.comment__head time { font: 500 11px var(--f-mono); letter-spacing: .08em; color: var(--mu); }
+.case__block .comment__text { margin-top: 6px; color: var(--tx); font-size: 15px; white-space: pre-line; }
+.comments__form {
+  max-width: 820px;
+  padding: clamp(20px, 3vw, 32px);
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--bg2);
+}
+.comments__note { font-size: 13px; color: var(--mu); }
+.comments__form.is-sent .comments__note { color: var(--ac); }

@@ -86,3 +86,30 @@ export async function guardarAnimaciones(_prev: FormState, formData: FormData): 
       : "Guardado: el portafolio mostrará siempre la intro, los efectos y el 3D.",
   };
 }
+
+/* Moderación de comentarios de los proyectos */
+const comentarioIdSchema = z.string().uuid();
+
+export async function aprobarComentario(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const id = comentarioIdSchema.parse(formData.get("id"));
+  const supabase = await createClient();
+  await supabase.from("comentarios").update({ aprobado: true }).eq("id", id);
+  revalidatePath("/admin");
+}
+
+export async function ocultarComentario(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const id = comentarioIdSchema.parse(formData.get("id"));
+  const supabase = await createClient();
+  await supabase.from("comentarios").update({ aprobado: false }).eq("id", id);
+  revalidatePath("/admin");
+}
+
+export async function eliminarComentario(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const id = comentarioIdSchema.parse(formData.get("id"));
+  const supabase = await createClient();
+  await supabase.from("comentarios").delete().eq("id", id);
+  revalidatePath("/admin");
+}

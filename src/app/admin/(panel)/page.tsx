@@ -1,5 +1,6 @@
 import { AnimationsForm } from "@/components/admin/AnimationsForm";
 import { PasswordForm } from "@/components/admin/PasswordForm";
+import { SocialPanel, type Comentario, type LikeTotal } from "@/components/admin/SocialPanel";
 import { requireAdmin, type Usuario } from "@/lib/auth";
 import { getPortfolioConfig } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
@@ -20,7 +21,7 @@ export default async function AdminPage() {
   const usuario = await requireAdmin();
   const supabase = await createClient();
   // RLS: un admin ve todas las filas de usuarios y de mensajes.
-  const [{ data: usuarios }, { data: mensajes }, config] = await Promise.all([
+  const [{ data: usuarios }, { data: mensajes }, config, { data: comentarios }, { data: likes }] = await Promise.all([
     supabase
       .from("usuarios")
       .select("id, email, nombre, rol, activo, created_at")
@@ -33,6 +34,13 @@ export default async function AdminPage() {
       .limit(50)
       .returns<Mensaje[]>(),
     getPortfolioConfig(),
+    supabase
+      .from("comentarios")
+      .select("id, proyecto, nombre, correo, comentario, aprobado, created_at")
+      .order("created_at", { ascending: false })
+      .limit(100)
+      .returns<Comentario[]>(),
+    supabase.rpc("likes_totales"),
   ]);
 
   return (
@@ -41,6 +49,8 @@ export default async function AdminPage() {
         <p className="mb-2 font-sans text-xs uppercase tracking-[0.28em] text-[var(--green)]">Bienvenido</p>
         <h1 className="text-4xl font-semibold tracking-tight">{usuario.nombre ?? usuario.email}</h1>
       </section>
+
+      <SocialPanel comentarios={comentarios ?? []} likes={(likes ?? []) as LikeTotal[]} />
 
       <section className="rounded-2xl border border-[var(--line)] bg-white/50 p-6">
         <h2 className="mb-1 text-2xl font-semibold">Animaciones del portafolio</h2>

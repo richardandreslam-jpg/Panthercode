@@ -290,7 +290,7 @@ const cardHtml = (project, index) => `
   <button class="card" type="button" data-project="${index}"${project.fx ? ` data-fx="${escapeHtml(project.fx)}"` : ""} aria-label="Ver proyecto ${escapeHtml(project.t)}">
     ${thumbHtml(project, index)}
     <div class="card__body">
-      <span class="tag">${escapeHtml(project.c)}</span>
+      <span class="card__meta"><span class="tag">${escapeHtml(project.c)}</span>${project.slug ? `<span class="card__likes" data-likes="${escapeHtml(project.slug)}" aria-label="Me gusta"><i aria-hidden="true">♥</i> <b>·</b></span>` : ""}</span>
       <h3 class="card__title">${escapeHtml(project.t)}</h3>
       <p class="card__desc">${escapeHtml(project.d)}</p>
       <ul class="tags">${project.g.map((tag) => `<li>${escapeHtml(tag)}</li>`).join("")}</ul>
@@ -366,6 +366,7 @@ const setFilter = (category) => {
   renderFilters();
   renderGrid();
   if (projectsMode === "board") renderBoard();
+  paintLikes();
 };
 
 /* =========================================================
@@ -627,6 +628,15 @@ const renderCase = (slug) => {
         <h1 class="title title--page reveal" id="case-title">${escapeHtml(p.t)}</h1>
         <p class="case__lead reveal">${escapeHtml(p.d)}</p>
         <dl class="case__meta reveal">${meta.map(([k, v]) => `<div><dt class="tag">${k}</dt><dd>${escapeHtml(v)}</dd></div>`).join("")}</dl>
+        <!-- Me gusta del proyecto (tabla proyecto_likes en Supabase) -->
+        <div class="like reveal">
+          <button class="like__btn" type="button" data-like="${escapeHtml(slug)}" aria-pressed="false">
+            <span class="like__heart" aria-hidden="true">♥</span>
+            <span class="like__label">Me gusta</span>
+            <b class="like__count" data-likes="${escapeHtml(slug)}">·</b>
+          </button>
+          <p class="like__hint">¿Te gusta este proyecto? Déjame saberlo.</p>
+        </div>
       </div>
       <figure class="case__hero reveal"><img src="${escapeHtml(p.img)}" alt="Vista de la app ${escapeHtml(p.t)}"></figure>
     </div>
@@ -653,11 +663,32 @@ const renderCase = (slug) => {
       <div class="case__results">${c.resultados.map((r) => `<div class="stat reveal"><strong>${escapeHtml(r.v)}</strong><span class="tag">${escapeHtml(r.l)}</span></div>`).join("")}</div>
     </section>
 
+    <!-- Comentarios: se publican solo cuando Richard los aprueba en /admin -->
+    <section class="case__block comments" aria-labelledby="comments-title">
+      <p class="tag reveal">[ 05 ]</p><h2 class="subtitle reveal" id="comments-title">Comentarios</h2>
+      <ul class="comments__list" id="comments-list" aria-live="polite"><li class="comments__empty">Cargando comentarios…</li></ul>
+      <form class="comments__form reveal" id="comment-form" data-proyecto="${escapeHtml(slug)}" novalidate>
+        <div class="cform__grid">
+          <label class="field"><span class="tag">Nombre</span><input name="nombre" autocomplete="name" maxlength="80" required placeholder="¿Cómo te llamas?"></label>
+          <label class="field"><span class="tag">Correo (opcional, no se publica)</span><input name="correo" type="email" autocomplete="email" maxlength="200" placeholder="Para contactarte si quieres trabajar juntos"></label>
+          <label class="field-trap" aria-hidden="true">Web<input name="web" tabindex="-1" autocomplete="off"></label>
+          <label class="field field--full"><span class="tag">Comentario</span><textarea name="comentario" rows="3" maxlength="1000" required placeholder="¿Qué te pareció este proyecto?"></textarea></label>
+        </div>
+        <div class="cform__actions">
+          <button class="btn btn--main" type="submit"><span>Comentar</span><i aria-hidden="true">→</i></button>
+          <p class="comments__note">Tu comentario se publicará cuando sea aprobado.</p>
+        </div>
+        <p class="cform__error" id="comment-error" role="alert"></p>
+      </form>
+    </section>
+
     <a class="case__next reveal" href="#proyecto/${escapeHtml(next.slug)}">
       <span class="tag">Siguiente proyecto</span>
       <span class="case__next-title">${escapeHtml(next.t)} <i aria-hidden="true">→</i></span>
     </a>`;
   renderedCase = slug;
+  loadComments(slug);
+  paintLikes();
 };
 
 /* Modal de proyecto (si el proyecto tiene caso de estudio, abre su página) */
@@ -1452,7 +1483,7 @@ const setProjectsMode = (mode) => {
   $$("[data-mode]").forEach((btn) => btn.setAttribute("aria-pressed", String(btn.dataset.mode === mode)));
   $("#grid").hidden = mode !== "grid";
   $("#board").hidden = mode !== "board";
-  if (mode === "board") { renderBoard(); centerBoard(); }
+  if (mode === "board") { renderBoard(); centerBoard(); paintLikes(); }
   else cancelAnimationFrame(board.raf);
 };
 
@@ -2143,6 +2174,151 @@ const SUPABASE = {
   key: "sb_publishable_5UFDTxoQDlosGQtbs8iFRQ_dB1ZksJR",
 };
 
+/* =========================================================
+   ME GUSTA Y COMENTARIOS DE PROYECTOS
+   - Me gusta: anónimo; cada navegador tiene un id (localStorage) → uno por proyecto.
+   - Comentarios: quedan pendientes y se publican cuando Richard los aprueba en /admin.
+   ========================================================= */
+const sbHeaders = { apikey: SUPABASE.key, "Content-Type": "application/json" };
+const sbRpc = async (fn, args = {}) => {
+  const res = await fetch(`${SUPABASE.url}/rest/v1/rpc/${fn}`, { method: "POST", headers: sbHeaders, body: JSON.stringify(args) });
+  if (!res.ok) throw new Error(`Supabase ${res.status}`);
+  return res.json();
+};
+
+const storage = {
+  get: (k, fallback) => { try { const v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); } catch { return fallback; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* sin almacenamiento */ } },
+};
+const visitorId = (() => {
+  let id = storage.get("pc-visitante", null);
+  if (!id) { id = crypto.randomUUID(); storage.set("pc-visitante", id); }
+  return id;
+})();
+const liked = new Set(storage.get("pc-likes", []));
+const likeTotals = {};
+
+/* Pinta contadores (tarjetas y detalle) y el estado del botón */
+const paintLikes = () => {
+  $$("[data-likes]").forEach((el) => {
+    const n = likeTotals[el.dataset.likes];
+    const b = el.matches("b") ? el : el.querySelector("b");
+    if (b) b.textContent = n === undefined ? "·" : String(n);
+  });
+  $$("[data-like]").forEach((btn) => {
+    const on = liked.has(btn.dataset.like);
+    btn.classList.toggle("is-liked", on);
+    btn.setAttribute("aria-pressed", String(on));
+    btn.querySelector(".like__label").textContent = on ? "Te gusta" : "Me gusta";
+  });
+};
+
+const loadLikes = async () => {
+  try {
+    const rows = await sbRpc("likes_totales");
+    PROJECTS.forEach((p) => { if (p.slug) likeTotals[p.slug] = 0; });
+    rows.forEach((r) => { likeTotals[r.proyecto] = r.total; });
+    paintLikes();
+  } catch { /* sin conexión: los contadores quedan en "·" */ }
+};
+
+const toggleLike = async (btn) => {
+  const slug = btn.dataset.like;
+  const on = !liked.has(slug);
+  // Respuesta inmediata; luego se confirma con el total real
+  if (on) liked.add(slug); else liked.delete(slug);
+  storage.set("pc-likes", [...liked]);
+  likeTotals[slug] = Math.max(0, (likeTotals[slug] ?? 0) + (on ? 1 : -1));
+  paintLikes();
+  if (on) {
+    btn.classList.remove("is-pop");
+    void btn.offsetWidth;
+    btn.classList.add("is-pop");
+  }
+  try {
+    likeTotals[slug] = await sbRpc("like_proyecto", { p_proyecto: slug, p_visitante: visitorId, p_like: on });
+    paintLikes();
+  } catch {
+    showToast("No se pudo guardar tu me gusta");
+  }
+};
+
+const formatDate = new Intl.DateTimeFormat("es-CO", { dateStyle: "medium" });
+const loadComments = async (slug) => {
+  const list = $("#comments-list");
+  if (!list) return;
+  try {
+    const res = await fetch(
+      `${SUPABASE.url}/rest/v1/comentarios?select=nombre,comentario,created_at&proyecto=eq.${encodeURIComponent(slug)}&order=created_at.desc&limit=50`,
+      { headers: { apikey: SUPABASE.key } },
+    );
+    if (!res.ok) throw new Error();
+    const rows = await res.json();
+    if (renderedCase !== slug) return;   // el usuario ya cambió de proyecto
+    list.innerHTML = rows.length
+      ? rows.map((c) => `
+        <li class="comment">
+          <span class="comment__avatar" aria-hidden="true">${escapeHtml(c.nombre.trim().charAt(0).toUpperCase())}</span>
+          <div><p class="comment__head"><b>${escapeHtml(c.nombre)}</b><time datetime="${escapeHtml(c.created_at)}">${formatDate.format(new Date(c.created_at))}</time></p>
+          <p class="comment__text">${escapeHtml(c.comentario)}</p></div>
+        </li>`).join("")
+      : '<li class="comments__empty">Todavía no hay comentarios. ¡Sé el primero!</li>';
+  } catch {
+    list.innerHTML = '<li class="comments__empty">No se pudieron cargar los comentarios.</li>';
+  }
+};
+
+const submitComment = async (form) => {
+  const data = new FormData(form);
+  const error = $("#comment-error");
+  if (String(data.get("web") || "")) return;   // campo trampa para bots
+  const nombre = String(data.get("nombre") || "").trim();
+  const correo = String(data.get("correo") || "").trim();
+  const comentario = String(data.get("comentario") || "").trim();
+  form.querySelectorAll(".field").forEach((f) => f.classList.remove("is-invalid"));
+  const bad = [];
+  if (nombre.length < 2) bad.push("nombre");
+  if (correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) bad.push("correo");
+  if (comentario.length < 3) bad.push("comentario");
+  if (bad.length) {
+    bad.forEach((n) => form.elements[n].closest(".field").classList.add("is-invalid"));
+    error.textContent = "Revisa los campos marcados.";
+    return;
+  }
+  error.textContent = "";
+  const button = form.querySelector('button[type="submit"]');
+  button.disabled = true;
+  try {
+    const res = await fetch(`${SUPABASE.url}/rest/v1/comentarios`, {
+      method: "POST",
+      headers: { ...sbHeaders, Prefer: "return=minimal" },
+      body: JSON.stringify({ proyecto: form.dataset.proyecto, nombre, correo: correo || null, comentario }),
+    });
+    if (!res.ok) throw new Error();
+    form.reset();
+    form.querySelector(".comments__note").textContent = "¡Gracias! Tu comentario quedó en revisión y se publicará cuando sea aprobado.";
+    form.classList.add("is-sent");
+    showToast("Comentario enviado a revisión");
+  } catch {
+    error.textContent = "No se pudo enviar el comentario. Intenta de nuevo.";
+  } finally {
+    button.disabled = false;
+  }
+};
+
+const initSocial = () => {
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest?.("[data-like]");
+    if (btn) toggleLike(btn);
+  });
+  document.addEventListener("submit", (e) => {
+    if (e.target.id !== "comment-form") return;
+    e.preventDefault();
+    submitComment(e.target);
+  });
+  loadLikes();
+};
+
 const saveMessage = async (row) => {
   const res = await fetch(`${SUPABASE.url}/rest/v1/mensajes`, {
     method: "POST",
@@ -2255,6 +2431,7 @@ const init = () => {
   const loaderDone = window.initIntro ? initIntro({ always: true }) : initLoader();
   if (window.initWordmark3D) initWordmark3D($("#w3d"), undefined, { ready: loaderDone });
   initContactForm();
+  initSocial();
 
   document.addEventListener("click", (e) => {
     const target = e.target;
